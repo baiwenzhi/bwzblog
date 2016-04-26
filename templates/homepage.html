@@ -1,0 +1,87 @@
+{% extends 'base/base.html' %}
+
+{% block right-content %}
+<div id="search">
+    <form action="/search/" method="get" id="form1">
+        <input type="hidden" name="page" value=""/>
+        <input type="text" name="keywords" value="{{ keywords|default_if_none:'' }}">
+        <input class="button" type="submit" value="Search">
+    </form>
+
+</div>
+<div class="blogs ">
+{% for blog in recList %}
+    <div class="blog ini_blog">
+        <div class="blog_title">
+            <div class="pre-cat">
+                <div class="pre-catinner pre_btn">
+                    <a href="/category/{{ blog.category_id }}">{{ blog.category_name }}</a>
+                </div>
+                <div class="pre-catarrow">
+                </div>
+            </div>
+
+            <a href="{{ LOCAL_HOST }}/blog/{{ blog.name }}" >
+                <h2>{{ blog.title }}</h2>
+            </a>
+
+        </div>
+        <div class="info">
+            <span><span>时间：</span>{{ blog.create_time|date:'Y年m月d日' }}</span>
+            <span>点击：{{ blog.visit_count }}</span>
+            <span>评论：{{ blog.comment_count }}</span>
+        </div>
+
+        <div class="content">
+            {{ blog.summary|default_if_none:''|safe }}
+            <p class="r_pa">
+                {% if request.user.is_authenticated %}
+                    {% if request.user == request.session.blog_owner %}
+                        <a href="/edit/?type=1&blog_id={{ blog.id }}" target="_blank">编辑</a>
+                        <a onclick="bind_dialog_yes(del_blog,'你确定要删除这个博客吗？删除后将无法访问此博客！',this,'{{ blog.id }}')">删除</a>
+                        {% if blog.fav == 1 %}
+                            <a fav="0" onclick="fav_blog(this,'{{ blog.id }}')"  style="color:red;">取消推荐</a>
+                        {% else %}
+                            <a fav="1" onclick="fav_blog(this,'{{ blog.id }}')">设为推荐</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </p>
+        </div>
+        <div class="right_a">
+            <a href="{{ LOCAL_HOST }}/blog/{{ blog.name }}" class="btn_red">阅读全文</a>
+        </div>
+    </div>
+{% empty %}
+    <div class="blog">
+        <h2>暂无内容</h2>
+    </div>
+{% endfor %}
+
+{% include "base/bottom_page.html" %}
+</div>
+{% endblock %}
+
+{% block js-content %}
+<script>
+    function goToPage(page_id) {
+        $("#form1 input[name=page]").val(page_id)
+        $("#form1").submit();
+    }
+</script>
+
+<script type="text/javascript">
+    SyntaxHighlighter.highlight();
+    function showblog(blog) {
+        $(blog).removeClass('ini_blog')
+    }
+    var ini = 0
+    $('.ini_blog').each(function () {
+        var sf = $(this)
+        setTimeout(function(){showblog($(sf))},ini)
+        ini+=200
+    })
+
+</script>
+
+{% endblock %}

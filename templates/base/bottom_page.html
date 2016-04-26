@@ -1,0 +1,30 @@
+{% load mobiletag %}
+{% if recList %}
+<div class="pagination">
+    <ul>
+        {% if recList.has_previous %}
+            {% if list_paginator.num_pages > 10 %}
+                <li><a  onclick="goToPage('1');return false">首页</a></li>
+            {% endif %}
+            <li><a  onclick="goToPage('{{ recList.previous_page_number }}');return false">上一页</a></li>
+
+        {% endif %}
+        {% if list_paginator.num_pages and recList.number %}
+            {% get_pagination_pages recList.number list_paginator.num_pages %}
+            {% for i in range %}
+                {% ifequal  recList.number  i %}
+                    <li class="active"><a  onclick="goToPage('{{ i }}');return false">{{ i }}</a></li>
+                {% else %}
+                    <li><a  onclick="goToPage('{{ i }}');return false">{{ i }}</a></li>
+                {% endifequal %}
+            {% endfor %}
+        {% endif %}
+        {% if recList.has_next %}
+            <li><a  onclick="goToPage('{{ recList.next_page_number }}');return false">下一页</a></li>
+            {% if list_paginator.num_pages > 10 %}
+                <li><a  onclick="goToPage('{{ list_paginator.num_pages }}');return false">尾页</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</div>
+{% endif %}

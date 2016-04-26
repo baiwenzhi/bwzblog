@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        {% endblock %}
+        {{ request.session.blog_owner.blog_name }}
+    </title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="keywords" content="柏文智 柏文智的博客"/>
+    <meta name="description" content="柏文智 柏文智的博客"/>
+    <meta property="wb:webmaster" content="72d1a537734b083b" />
+    <link href="/static/image/favicon.ico" rel="icon" type="image/x-icon" />
+    <link href="/static/image/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+    <link rel="stylesheet" type="text/css" href="/static/ueditor1_3_6-utf8-jsp/third-party/SyntaxHighlighter/shCoreDefault.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?f5fb6db374b6e6999dc9ed4d19d6f60f";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+<body>
+<div class="container">
+    <div class="div_wrap">
+
+        <div id="main-left">
+            <div class="menu_content">
+                <div class="log_img">
+                    <a href="/">
+                        <div class="name">{{ request.session.blog_owner.blog_name }}</div>
+                    </a>
+                </div>
+                <div id="menubar">
+                    <ul>
+                        <li {% if menu == 'home' %}class="current-click"{% endif %}>
+                            <a href="/">
+                                <span class="menu_text">首页</span>
+                                <span class="bck_mb"></span>
+                            </a>
+
+                        </li>
+                        <li onclick="o_c_categorys(this,{{ request.session.categorys|length }})" {% if menu == 'categorys' %}class="current-click"{% endif %}>
+                            <a>
+                                <span class="menu_text">分类<span class="menu-icon"></span></span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                        <ul id="category" class="hide" {% if menu == 'categorys' %}style="height:{%  widthratio 39 1 request.session.categorys|length %}px"{% endif %}>
+                            {% for category in request.session.categorys %}
+                                <li {% if category.id == category_id %}class="current-click"{% endif %}>
+                                    <a href="/category/{{ category.id }}" >
+                                        <span class="menu_text_c">{{ category.name }}</span>
+                                        <span class="bck_mb_c"></span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <li {% if menu == 'fav' %}class="current-click"{% endif %}>
+                            <a href="/fav/">
+                                <span class="menu_text">推荐</span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                        <li {% if menu == 'timeline' %}class="current-click"{% endif %}>
+                            <a href="/timeline/">
+                                <span class="menu_text">时间轴</span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li>
+                                <a href="/mycenter/" target="_blank">
+                                    <span class="menu_text">博客管理</span>
+                                    <span class="bck_mb"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/logout/">
+                                    <span class="menu_text">退出登陆</span>
+                                    <span class="bck_mb"></span>
+                                </a>
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+                </div>
+
+            </div>
+            <div class="me_c">
+                <div class="log_img">
+                    <img src="{% if request.session.blog_owner.logo %}{{ MEDIA_URL }}{{ request.session.blog_owner.logo }}{% else %}/static/image/headlogo.jpg{% endif %}">
+
+                </div>
+                <div class="contact">
+                    <a href="http://weibo.com/baiwenzhi" target="_blank" class="tone">
+                        <i class="fa fa-weibo"></i> weibo
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="main-right">
+            {% block right-content %}
+
+            {% endblock %}
+            <footer class="footer">
+                Designed by <span class="info">bwz</span>
+            </footer>
+        </div>
+    </div>
+</div>
+<div id="uptop"></div>
+<div id="error_show" class="error_hide">
+    <span></span>
+    <a href="javascript:void(0)" class="cd-popup-close img-replace">close</a>
+</div>
+
+<div class="change_bck">
+    <a onclick="change_back(this)">换个背景</a>
+</div>
+{% if request.user == request.session.blog_owner %}
+    <div id="cd-popup" class="cd-popup" role="alert">
+        <div class="cd-popup-container">
+            <p>你确定删除此项目吗?</p>
+            <ul class="cd-buttons">
+                <li><a href="javascript:void(0)">Yes</a></li>
+                <li><a href="javascript:void(0)">No</a></li>
+            </ul>
+            <a href="javascript:void(0)" class="cd-popup-close img-replace">Close</a>
+        </div>
+        <!-- cd-popup-container -->
+    </div>
+{% endif %}
+<!-- cd-popup -->
+<input type="hidden" id="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery_scoll.js"></script>
+<script type="text/javascript" src="/static/js/all.js"></script>
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/third-party/SyntaxHighlighter/shCore.js"></script>
+{% if request.user == request.session.blog_owner %}
+    <script type="text/javascript" src="/static/js/center.js"></script>
+{% endif %}
+
+<script>
+
+    if($(window).width()>960){
+        var backgroundlist = {{ request.session.backgrounds|safe }};
+        var url = "url('"+backgroundlist[parseInt(Math.random()*backgroundlist.length)]+"')";
+        $('body').css('background-image',url)
+    }else{
+        $('.change_bck').remove()
+    }
+</script>
+{% block js-content %}
+
+{% endblock %}
+</body>
+</html>

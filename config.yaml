@@ -1,0 +1,17 @@
+name: blogbwz
+version: 11
+libraries:
+- name: "django"
+  version: "1.8"
+
+cron:
+- description: cron_get_background_img
+  url: /get_background/
+  schedule: "30 1 * * *"
+
+handlers:
+- url: /static
+
+handlers:
+- url: /static/
+  gzip: on

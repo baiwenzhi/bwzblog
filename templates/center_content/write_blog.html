@@ -1,0 +1,46 @@
+<h1>{% if blog %}修改blog{% else %}增加blog{% endif %}</h1>
+<input type="hidden" id="blog_id" value="{{ blog.id|default_if_none:'' }}">
+<p>
+    <input id="title" class="long_input"  autocomplete="off" placeholder="标题" type="text" value="{{ blog.title|default_if_none:'' }}">
+</p>
+<p>
+    <select id="category_id">
+        <option value="">选择分类</option>
+        {% for category in categorys %}
+            <option value="{{ category.id }}"
+                    {% if blog.category_id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+</p>
+
+<div style="display: none;" id="real_content">
+    {{ blog.content|safe|default_if_none:'' }}
+</div>
+    <textarea id="content">
+        {{ blog.content|safe|default_if_none:'' }}
+    </textarea>
+<p>
+    <div class="input_btn" onclick="save_blog()">保存</div>
+</p>
+
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.all.min.js"></script>
+
+<script>
+    var editorOption = {
+        wordCount: false,
+        //关闭elementPath
+        elementPathEnabled: false,
+        initialFrameWidth: 900,
+        initialContent: '',
+        imagePath: "{{ MEDIA_URL }}",
+        imageUrl: "/base/photo_upload/",
+        param_upload: '{"csrfmiddlewaretoken":"{{ csrf_token }}"}'
+    };
+    var editor_a = new baidu.editor.ui.Editor(editorOption);
+
+    $(document).ready(function(){
+        editor_a.render('content');
+    })
+
+</script>

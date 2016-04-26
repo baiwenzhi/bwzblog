@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+         .alert-success {
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+            padding: 10px;
+}
+
+    </style>
+</head>
+<body>
+{% if msg %}
+    <div class="alert-success">
+        {{ msg }}
+    </div>
+    {% endif %}
+<div>
+    {{ request.session.access_tokens_response }}
+</div>
+<div>
+    code:{{ request.session.code }}
+</div>
+<div>
+
+    {% if dzmdali %}
+        已绑定淘宝账号：{{ dzmdali.taobao_user_nick }}
+        <br/>
+        <br/>
+        <a href="/printing/unbind_waybill_auth/" class="btn btn-yellow">解除绑定</a>
+    {% else %}
+        <a href="/printing/waybill_auth/" class="btn btn-green">绑定淘宝账号</a>
+    {% endif %}
+</div>
+</body>
+</html>

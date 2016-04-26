@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <style>
+        .message{
+            text-align: left;
+            margin:5px;
+            padding-left: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .parent{
+             margin:auto;
+             position:relative;
+            padding: 20px;
+            }
+
+            .left{
+                float: left;
+            }
+
+            .right{
+                margin-left: 310px;
+                width:600px;
+                border-left: 1px solid #ccc;
+            }
+
+    </style>
+</head>
+<body>
+<div class="parent">
+    <div class="left">
+
+        <p>
+
+            <a href="/cdx/?type=taobao.wlb.waybill.i.get">获取物流服务商电子面单号v1.0</a><br/>
+            <a href="/cdx/?type=taobao.wlb.waybill.i.search">查询面单服务订购及面单使用情况.0</a><br/>
+            <a href="/cdx/?type=taobao.wlb.waybill.i.product">商家查询物流商产品类型接口</a><br/>
+
+        </p>
+
+        <div>
+            <div style="font-size: 16px;">查面单号状态v1.0</div>
+            <form action="/cdx/" method="get">
+                <input type="hidden" value="taobao.wlb.waybill.i.querydetail" name="type"/>
+                <select name="cp_code" id="cp_code" onchange="change_brancch(this)">
+                    <option value="">选择物流</option>
+                    {% for subscribtion in subscribtions.waybill_apply_subscription_info %}
+                        <option value="{{ subscribtion.cp_code }}">{{ subscribtion.cp_code }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="waybill_code" placeholder="waybill_code"/>
+                <input type="submit" value="查询"/>
+            </form>
+        </div>
+        <div  style="display: none" >
+            <select name="" id="waybill_branch"onchange="change_address(this)">
+
+            </select>
+        </div>
+        <div  style="display: none" >
+            <select name="" id="waybill_address">
+
+            </select>
+        </div>
+        <div id="md_use">
+
+        </div>
+    </div>
+    <div class="right">
+        <div class="message">
+            <p>登陆信息</p>
+            <p>
+                {{ request.session.ThirdConnect }}
+            </p>
+        </div>
+
+        <div class="message">
+            <p>请求参数:</p>
+            <p>{{ strparam }}</p>
+        </div>
+        <div class="message">
+            <p>返回结果:</p>
+            <p>{{ resp.str }}</p>
+        </div>
+        <div class="message">
+            <p>返回结果:</p>
+            <p>{{ waybill_code }}</p>
+        </div>
+        <div class="message">
+            <p>错误信息:</p>
+            <p>
+                {{ error }}
+            </p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+
+<script>
+    wlb_waybill_i_search_response={{ wlb_waybill_i_search_response|safe }}
+    waybill_apply_subscription_infos = wlb_waybill_i_search_response.wlb_waybill_i_search_response.subscribtions.waybill_apply_subscription_info
+    function change_brancch(self){
+        var cp_code = $(self).val();
+        var waybill_apply_subscription_info;
+
+        for(var i=0;i<waybill_apply_subscription_infos.length;i++){
+            if(waybill_apply_subscription_infos[i].cp_code == cp_code){
+                waybill_apply_subscription_info = waybill_apply_subscription_infos[i];
+                break
+            }
+        }
+        var waybill_branch_accounts = waybill_apply_subscription_info.branch_account_cols.waybill_branch_account;
+        if(waybill_apply_subscription_info.cp_type !=1){
+            for(var i=0;i<waybill_branch_accounts.length;i++){
+                $("#waybill_branch").append('<option value="'+waybill_branch_accounts[i].seller_id+'">'+waybill_branch_accounts[i].branch_name+'</option>')
+            }
+            $("#waybill_branch").parent().show()
+            $("#md_use").html('可用面单'+waybill_branch_accounts[i].quantity)
+        }
+
+
+        $.post('/get_products/',{
+            csrfmiddlewaretoken:'{{ csrf_token }}',
+            cp_code:cp_code
+        },function(data){
+            var services = data.wlb_waybill_i_product_response.product_types
+            console.log(services)
+        })
+    }
+
+    function change_address(self){
+        var cp_code = $("#cp_code").val()
+        var branch_account_cols;
+
+        for(var i=0;i<waybill_apply_subscription_infos.length;i++){
+            if(waybill_apply_subscription_infos[i].cp_code == cp_code){
+                branch_account_cols = waybill_apply_subscription_infos[i].branch_account_cols;
+                break
+            }
+        }
+        var waybill_branch_accounts = branch_account_cols.waybill_branch_account;
+        var waybill_addresses;
+        for(var i=0;i<waybill_branch_accounts.length;i++){
+            if($(self).val()==waybill_branch_accounts[i].seller_id){
+                waybill_addresses = waybill_branch_accounts[i].waybill_address
+            }
+        }
+        for(var i=0;i<waybill_addresses.length;i++){
+            $("#waybill_address").append('<option value="'+waybill_addresses[i].waybill_address_id+'">'+waybill_addresses[i].province+waybill_addresses[i].city+waybill_addresses[i].area+waybill_addresses[i].address_detail+'</option>')
+        }
+        $("#waybill_branch").parent().show()
+    }
+
+</script>
+</body>
+</html>

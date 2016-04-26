@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block right-content %}
+<ul class="s_ul">
+    {% for blog in recList %}
+        <li>
+            <a href="{{ LOCAL_HOST }}/blog/{{ blog.name }}">
+                <span>{{ blog.create_time|date:'Y-m-d' }}</span>
+                <div class="title">
+                    {{ blog.title }}
+                </div>
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% include "base/bottom_page.html" %}
+{% endblock %}
+
+
+{% block js-content %}
+<script>
+    function goToPage(page_id) {
+        window.location.href='/timeline/?page='+page_id
+    }
+</script>
+{% endblock %}

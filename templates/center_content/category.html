@@ -1,0 +1,37 @@
+    <div class="title_box">
+        博客分类管理
+    </div>
+    {% if recList %}
+    <table>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in recList %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>
+                        <a  href='javascript:void(0)' onclick="bind_dialog_yes(delete_category,'你确定删除'+$(this).parent().prev().prev().html()+'吗？删除后此分类下的博客将无法访问!',this,{{ category.id }})">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    {% include 'center_content/bottom_ajax.html' %}
+    {% else %}
+        请添加分类
+    {% endif %}
+    <div class="title_box">
+        添加分类
+    </div>
+    <div class="add_category">
+        <input type="text" name="name" placeholder="分类名" id="category_name" autocomplete="off">
+        <button class="btn" onclick="add_category()">确认添加</button>
+    </div>
+

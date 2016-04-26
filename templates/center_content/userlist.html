@@ -1,0 +1,40 @@
+    <div class="title_box">
+        用户列表
+    </div>
+    {% if recList %}
+    <table>
+        <thead>
+            <tr>
+                <th>博客名</th>
+                <th>博客地址</th>
+                <th>注册时间</th>
+                <th>用户名</th>
+                <th>邮箱</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in recList %}
+                <tr>
+                    <td>{{ user.blog_name }}</td>
+                    <td><a href="/homepage/{{ user.name }}" target="_blank">http://baiwenzhi.com/homepage/{{ user.name }}</a></td>
+                    <td>{{ user.create_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if not user.is_active %}已删除&nbsp;{% endif %}
+                        {% if user.is_superuser %}管理员&nbsp;{% endif %}
+                    </td>
+                    <td>
+                        <a  href='javascript:void(0)' onclick="bind_dialog_yes(delete_user,'你确定更改此用户状态吗？',this,{{ user.id }})">{% if user.is_active %}删除{% else %}取消删除{% endif %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+        请先添加博客
+    {% endif %}
+    {% include 'center_content/bottom_ajax.html' %}

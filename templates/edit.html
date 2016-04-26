@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改blog</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/index_admin.css" />
+</head>
+<style>
+    p{
+        margin-bottom: 5px;
+
+    }
+</style>
+<body>
+
+
+<div style="width: 900px;margin:80px auto;text-align: left;">
+    <h1>修改blog</h1>
+    <input type="hidden"  id="id" value="{{ blog.id|default_if_none:'' }}">
+    <p>
+        <input id="title" class="long_input" placeholder="标题" type="text" value="{{ blog.title|default_if_none:'' }}">
+    </p>
+    <p>
+        <select id="category_id">
+            {% for category in categorys %}
+                <option value="{{ category.id }}" {% if blog.category_id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <textarea id="content">
+        {{ blog.content|safe|default_if_none:'' }}
+    </textarea>
+    <p>
+        <div class="input_btn" onclick="save_blog()">保存</div>
+    </p>
+</div>
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.all.min.js"></script>
+
+<script>
+    var editorOption = {
+            wordCount: false,
+            //关闭elementPath
+            elementPathEnabled: false,
+            initialFrameWidth: 900,
+            initialContent: '',
+            imagePath: "{{ MEDIA_URL }}",
+            imageUrl: "/base/photo_upload/",
+            param_upload: '{"csrfmiddlewaretoken":"{{ csrf_token }}"}'
+        };
+        var editor_a = new baidu.editor.ui.Editor(editorOption);
+
+        editor_a.render('content');
+
+    function save_blog(){
+        var title=$('#title').val();
+        var content=editor_a.getContent();
+        if (title == ''){
+            alert('标题或摘要不能为空')
+            return
+        }
+        $.post('/edit/',{
+            csrfmiddlewaretoken:'{{ csrf_token }}',
+            id:$('#id').val(),
+            title:title,
+            content:content,
+            category_id:$('#category_id').val()
+
+        },function(data){
+            if(data['is_succ']){
+                window.close()
+            }else{
+                alert('保存失败')
+            }
+
+        })
+    }
+
+</script>
+</body>
+</html>

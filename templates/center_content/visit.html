@@ -1,0 +1,31 @@
+    <div class="title_box">
+        访问记录
+    </div>
+    {% if recList %}
+    <table>
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>agent</th>
+                <th>visit_time</th>
+                <th>ip</th>
+                <th>博客</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visiter in recList %}
+                <tr>
+                    <td>{{ visiter.user }}</td>
+                    <td>{{ visiter.agent }}</td>
+                    <td>{{ visiter.visit_time|date:'Y-m-d H:i:s' }}</td>
+                    <td>{{ visiter.ip }}</td>
+                    <td><a href="/blog/{{ visiter.blog.name }}" target="_blank">{{ visiter.blog.title }}</a></td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    {% else %}
+        暂无记录
+    {% endif %}
+    {% include 'center_content/bottom_ajax.html' %}

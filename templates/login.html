@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+   
+    <title>bwz's blog</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <style>
+        body{
+            background: #383A3C url("{{ img }}") no-repeat 0 0/cover;
+            color:#fff;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="error_show" class="error_hide">
+        <span></span>
+        <a href="javascript:void(0)" class="cd-popup-close img-replace">close</a>
+    </div>
+    <div class="center_content">
+        <div  id="login_register">
+
+            <div class="content_lg">
+                <div class="c_log_top">
+                    登陆
+                </div>
+                <div class="input_div">
+                        <input class="input_block"  type="text" id="username" autocomplete="off" placeholder="用户名"/>
+                    </div>
+                <div class="input_div">
+                    <input class="input_block" type="password" id="password" autocomplete="off"  onkeydown="if(event.keyCode==13){login_in($('#login_btn'))}"  placeholder="密码"/>
+                </div>
+
+                <div class="input_div">
+                    <input class="input_btn" style="margin: 0 auto;width: 100%;" type="button" id="login_btn" value="登陆" onclick="login_in(this)">
+                </div>
+                <div class="input_div" style="text-align: right;">
+                    <a href="javascript:void(0)" onclick="show_findpwd()" style="color:#333;">找回密码</a>
+                </div>
+            </div>
+        </div>
+        <div  id="findpwd_div" style="display:none;">
+
+            <div class="content_lg">
+                <div class="c_log_top">
+                    找回密码
+                </div>
+                <div class="input_div">
+                    <input class="input_block"  type="email" id="findpwd_email" placeholder="安全邮箱"/>
+                </div>
+                <div class="input_div">
+                    <input class="input_btn" style="margin: 0 auto;width: 100%;" type="button" id="sub_findpwd" value="找回密码" onclick="findpwd()">
+                </div>
+                <div class="input_div" style="text-align: right;">
+                    <a href="javascript:void(0)" onclick="returnlogin()" style="color:#333;">返回登陆</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/all.js"></script>
+    <script>
+
+
+        var filter  = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var pwdf = /^[0-9a-zA-Z]+$/;
+
+        function init_input(){
+            $(".center_content input[type=text]").val('')
+            $(".center_content input[type=password]").val('')
+            $(".center_content input[type=email]").val('')
+        }
+        function show_findpwd(){
+            init_input()
+            $("#login_register").hide()
+            $("#findpwd_div").fadeIn()
+
+        }
+        function returnlogin(){
+            init_input()
+            $("#findpwd_div").hide()
+            $("#login_register").fadeIn()
+
+        }
+         function login_in (self) {
+
+                var username=$.trim($('#username').val());
+                var password=$.trim($('#password').val());
+                if(!pwdf.test(username)){
+                    show_error("用户名格式不对")
+                    return
+                }
+                if(password.length<6){
+                    show_error("请输入6位以上密码")
+                    return
+                }
+                if(!pwdf.test(password)){
+                    show_error("密码只能由数字和字母组成")
+                    return
+                }
+                show_tip('登陆中...')
+                $.post('/login/',{
+                    csrfmiddlewaretoken:'{{ csrf_token }}',
+                    username:username,
+                    password:password
+                },function(data){
+                    if(data['is_succ']){
+                        show_tip('登陆成功，正在跳转')
+                        {% if next %}
+                            window.location.href="{{ next }}"
+                        {% else %}
+                            window.location.href='/'
+                        {% endif %}
+                    }else{
+                        show_error(data['msg'])
+                    }
+                })
+
+           }
+
+         function findpwd(){
+             var email = $.trim($('#findpwd_email').val());
+             if(!filter.test(email)){
+                    show_error("邮箱格式不对")
+                    return
+                }
+             show_tip('正在发送请求')
+             $.post('/findpwd/',{
+                 csrfmiddlewaretoken:'{{ csrf_token }}',
+                 email:email
+             },function(data){
+                 if(data['is_succ']){
+                    hide_tip()
+                    alert('找回密码链接已发送到您的邮箱')
+                    returnlogin()
+                }else{
+                    show_error(data['msg'])
+                }
+             })
+         }
+
+    </script>
+</body>
+</html>

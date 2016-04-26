@@ -1,0 +1,94 @@
+<div class="title_box">
+    个人资料
+</div>
+<div >
+    <div class="u_logo">
+        <div id="imgPreview" >
+            <img src="{% if request.user.logo %}{{ MEDIA_URL }}{{ request.user.logo }}{% else %}/static/image/headlogo.jpg{% endif %}" alt="头像">
+        </div>
+        <div class="r_edit_logo">
+            <input type="file" accept="image/*" class="p-input" id="user_logo" onchange="PreviewImage(this)" name="img">
+            <a onclick="show_edit_logo(this)" class="btn">修改头像</a>
+            <a onclick="save_user_logo(this)" class="btn" style="display: none;">保存</a>
+            <a onclick="cancle_edit_logo(this)" class="btn" style="display: none;background-color: darkgreen;">取消</a>
+        </div>
+    </div>
+    <div id="user_info">
+
+        <div class="per-item">
+            <ul class="u_title">
+                <li class="li-title">用户名：</li>
+                <li class="li-ct">{{ request.user.username }}</li>
+            </ul>
+        </div>
+        <div class="per-item">
+            <ul class="u_title">
+                <li class="li-title">邮箱：</li>
+                <li class="li-ct">{{ request.user.email }}</li>
+            </ul>
+        </div>
+        <div class="per-item">
+            <ul class="u_title">
+                <li class="li-title">博客名：</li>
+                <li class="li-ct">
+                    <span>{{ request.user.blog_name }}</span>
+                    <input type="text" class="p-input" id="blog_name" value="{{ request.user.blog_name }}">
+                </li>
+                <li class="li-edit">
+                    <a href="javascript:void(0);" onclick="save_blog_name(this)" style="display: none;">保存</a>
+                    <a href="javascript:void(0);" onclick="cancle_edit_blog_name(this)" style="display: none;">取消</a>
+                    <a href="javascript:void(0);" onclick="show_edit_blog_name(this)">修改</a>
+                </li>
+            </ul>
+        </div>
+        <div class="per-item">
+            <ul class="u_title">
+                <li class="li-title">博客短名：</li>
+                <li class="li-ct">
+                    <span>{{ request.user.name }}</span>
+                    <input type="text" class="p-input" id="blog_name" value="{{ request.user.blog_name }}">
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_edit_blog_name(self){
+        $($(self).parent().prev().find('span')).hide();
+        $("#blog_name").show();
+        $(self).hide()
+        $(self).prev().show();
+        $(self).prev().prev().show();
+    }
+    function cancle_edit_blog_name(self){
+        $($(self).parent().prev().find('span')).show();
+        $("#blog_name").hide();
+        $(self).hide()
+        $(self).prev().hide();
+        $(self).next().show();
+    }
+    function save_blog_name(self){
+        var blog_name = $.trim($('#blog_name').val())
+        if (blog_name == ''){
+            show_error('博客名不能为空');
+            return false;
+        }
+        $.post('/usercenter/save_blog_name/',{
+            csrfmiddlewaretoken:"{{ csrf_token }}",
+            blog_name:blog_name
+        },function(data){
+            if(data['is_succ']){
+                $($(self).parent().prev().find('span')).html(blog_name);
+                $($(self).parent().prev().find('span')).show();
+                $("#blog_name").hide();
+                $(self).hide()
+                $(self).next().hide();
+                $(self).next().next().show();
+            }else{
+                show_error(data['msg'])
+            }
+        })
+
+    }
+</script>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ request.session.blog_owner.name }}后台管理</title>
+    <link href="/static/image/favicon.ico" rel="icon" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/index_admin.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/ueditor/shCoreDefault.css"/>
+</head>
+<body>
+
+
+<div class="div_wrap">
+
+    <div id="main-left">
+        <div class="log_img">
+            <a href="/mycenter/">
+                <img src="{% if request.user.logo %}{{ MEDIA_URL }}{{ request.user.logo }}{% else %}/static/image/headlogo.jpg{% endif %}">
+
+                <div class="name">{{ request.user.blog_name }}</div>
+            </a>
+        </div>
+        <div id="menubar">
+            <ul>
+                <li>
+                    <a href='/' target="_blank">
+                        <span class="menu_text">前往我的博客</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a url='/usercenter/categorys/' href='#/usercenter/categorys/'>
+                        <span class="menu_text">分类管理</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a url='/usercenter/blogs/' href='#/usercenter/blogs/'>
+                        <span class="menu_text">博客列表</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a url='/usercenter/comments/' href='#/usercenter/comments/'>
+                        <span class="menu_text">评论列表</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a url='/usercenter/write_blog/' href='#/usercenter/write_blog/'>
+                        <span class="menu_text">写博客</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a url='/usercenter/usersetting/' href='#/usercenter/usersetting/'>
+                        <span class="menu_text">账号设置</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                {% if request.user.is_superuser %}
+                    <li>
+                        <a url='/usercenter/user_list/' href='#/usercenter/user_list/'>
+                            <span class="menu_text">用户列表</span>
+                            <span class="bck_mb"></span>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a url='/usercenter/visit/' href='#/usercenter/visit/'>
+                        <span class="menu_text">访问记录</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/logout/">
+                        <span class="menu_text">退出管理员登陆</span>
+                        <span class="bck_mb"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div id="main-right">
+        欢迎来到我的博客后台管理 <br/>
+    </div>
+    <div id="right_mb">
+        <div class="loader">
+            <div class="loading-3">
+                <i></i>
+                <i></i>
+                <i></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="error_show" class="error_hide">
+    <span></span>
+    <a href="javascript:void(0)" class="cd-popup-close img-replace">close</a>
+</div>
+<div id="cd-popup" class="cd-popup" role="alert">
+    <div class="cd-popup-container">
+        <p>你确定删除此项目吗?</p>
+        <ul class="cd-buttons">
+            <li><a href="javascript:void(0)">Yes</a></li>
+            <li><a href="javascript:void(0)">No</a></li>
+        </ul>
+        <a href="javascript:void(0)" class="cd-popup-close img-replace">Close</a>
+    </div>
+    <!-- cd-popup-container -->
+</div>
+<!-- cd-popup -->
+<input type="hidden" id="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/ajaxfileupload.js"></script>
+<script type="text/javascript" src="/static/js/all.js"></script>
+<script type="text/javascript" src="/static/js/center.js"></script>
+<script type="text/javascript" src="/static/ueditor/shCore.js"></script>
+{% block js_content %}
+{% endblock %}
+</body>
+</html>
