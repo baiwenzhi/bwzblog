@@ -151,7 +151,7 @@ def getip(ip):
     params['showapi_timestamp']= time.strftime("%Y%m%d%H%M%S", time.localtime())
     params['ip']= ip
     params['appid'] = settings.SHOWAPI.get('appid') or ''
-    params['serret'] = settings.SHOWAPI.get('secret') or ''
+    params['secret'] = settings.SHOWAPI.get('secret') or ''
     url='https://route.showapi.com/20-2?domain=%(ip)s&showapi_appid=%(appid)s&showapi_timestamp=%(showapi_timestamp)s&showapi_sign=%(secret)s'%(params)
     req = urllib2.Request(url)
     response = urllib2.urlopen(req)
