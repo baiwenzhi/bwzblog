@@ -273,22 +273,26 @@ def sendmail(title,message,recv):
                 connection=None
             )
 
-def user_visit(request,blog=None):
+def user_visit(request,blog):
     #统计用户访问情况。
     try:
         agent =request.META['HTTP_USER_AGENT']
         if agent.find('baidu')>=0 or agent.find('bot')>=0 or agent.find('pider')>=0:
             pass
         else:
-            visit_data = request.session.get('visit_data') or ""
-            if visit_data.find(str(blog.id)) <0:
+            visit_data = request.session.get('visit_data') or []
+            if isinstance(visit_data,str):
+                visit_data = []
+            if blog.id in visit_data:
+                pass
+            else:
+                visit_data.append(blog.id)
+                request.session['visit_data'] = visit_data
+                blog.visit_count +=1
+                blog.save()
                 sip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
                 ip = str(sip).split(',')[0]
                 weizhi = getip(ip) + ',' + ip
-                visit_data +=',%s'%str(blog.id)
-                request.session['visit_data'] = visit_data
                 User_visit.objects.create(ip=weizhi, user=request.session['mark_user'], agent=agent, blog=blog)
-            else:
-                pass
     except:
         pass
