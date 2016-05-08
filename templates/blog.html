@@ -115,7 +115,9 @@
     </script>
 
     <script type="text/javascript" src="/static/js/faceinput.js"></script>
+    <script type="text/javascript" src="/static/js/jquerycode.js"></script>
     <script type="text/javascript">
+        $("#qcode").qrcode({width: 64,height: 64,text: "{{ LOCAL_HOST }}/blog/{{ blog.name }}"});
         //为了在编辑器之外能展示高亮代码
         SyntaxHighlighter.highlight();
         //调整左右对齐
