@@ -60,7 +60,7 @@ class sqls():
                     order by a.create_time desc
                     '''
     sql_usercenter_blogs = '''
-                select a.id,a.create_time,a.title,a.fav,a.visit_count,count(b.id) as comment_count,c.name as category_name,c.id as category_id
+                select a.id,a.create_time,a.title,a.name,a.fav,a.visit_count,count(b.id) as comment_count,c.name as category_name,c.id as category_id
                 from base_blog a
                 left JOIN base_comment b ON b.blog_id = a.id and b.is_delete = 0
                  join base_category c on a.category_id = c.id and c.is_delete = 0
@@ -293,6 +293,6 @@ def user_visit(request,blog):
                 sip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
                 ip = str(sip).split(',')[0]
                 weizhi = getip(ip) + ',' + ip
-                User_visit.objects.create(ip=weizhi, user=request.session['mark_user'], agent=agent, blog=blog)
+                User_visit.objects.create(ip=weizhi, agent=agent, blog=blog)
     except:
         pass

@@ -9,9 +9,18 @@ cron:
   url: /get_background/
   schedule: "30 1 * * *"
 
-handlers:
-- url: /static
+- description: cron_analysis_day
+  url: /cron_analysis_day/
+  schedule: "59 11 * * *"
+
+- description: c
+  url: /cron_analysis_hour/
+  schedule: "59 * * * *"
 
 handlers:
+- url: /robots.txt
+  static_path: robots.txt
+
 - url: /static/
+  static_path: static
   gzip: on

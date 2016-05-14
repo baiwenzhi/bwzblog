@@ -6,7 +6,6 @@
     <link href="/static/image/favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/index_admin.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/ueditor/shCoreDefault.css"/>
 </head>
 <body>
 
@@ -86,7 +85,18 @@
 
 
     <div id="main-right">
-        欢迎来到我的博客后台管理 <br/>
+        <div>欢迎来到我的博客后台管理！</div>
+        <div>
+            <div style="width:45%;float: left;">
+                <div>每日访问：</div>
+                <canvas id="charts"></canvas>
+            </div>
+            <div style="width:45%;float: right;">
+                <div>最近24小时：</div>
+                <canvas id="charts2"></canvas>
+            </div>
+        </div>
+
     </div>
     <div id="right_mb">
         <div class="loader">
@@ -119,7 +129,76 @@
 <script type="text/javascript" src="/static/js/ajaxfileupload.js"></script>
 <script type="text/javascript" src="/static/js/all.js"></script>
 <script type="text/javascript" src="/static/js/center.js"></script>
-<script type="text/javascript" src="/static/ueditor/shCore.js"></script>
+<script type="text/javascript" src="/static/js/Chart.min.js"></script>
+<script>
+    var data = {
+        labels: [
+            {% for d in visit_counts %}
+                {% if forloop.first %}
+                    "{{ d.createdate|date:"m-d"}}"
+                {% else %}
+                    ,"{{ d.createdate|date:"m-d"}}"
+                {% endif %}
+
+            {% endfor %}
+
+        ],
+        datasets: [
+            {
+                fillColor : "rgba(151,187,205,0.5)",
+			    strokeColor : "rgba(151,187,205,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                data: [
+                    {% for d in visit_counts %}
+                        {% if forloop.first %}
+                            "{{ d.count }}"
+                        {% else %}
+                            ,"{{ d.count }}"
+                        {% endif %}
+                    {% endfor %}
+
+                ]
+            }
+        ]
+    }
+    var data_24 = {
+        labels: [
+            {% for d in visit_counts_24 %}
+                {% if forloop.first %}
+                    "{{ d.create_time|date:"m-d H"}}"
+                {% else %}
+                    ,"{{ d.create_time|date:"m-d H"}}"
+                {% endif %}
+
+            {% endfor %}
+
+        ],
+        datasets: [
+            {
+                fillColor : "rgba(151,187,205,0.5)",
+			    strokeColor : "rgba(151,187,205,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                data: [
+                    {% for d in visit_counts_24 %}
+                        {% if forloop.first %}
+                            "{{ d.count }}"
+                        {% else %}
+                            ,"{{ d.count }}"
+                        {% endif %}
+                    {% endfor %}
+
+                ]
+            }
+        ]
+    }
+
+    var ctx = $("#charts").get(0).getContext("2d");
+    new Chart(ctx).Bar(data, {responsive: true, scaleOverlay: false});
+    var ctx2 = $("#charts2").get(0).getContext("2d");
+    new Chart(ctx2).Bar(data_24, {responsive: true, scaleOverlay: false});
+</script>
 {% block js_content %}
 {% endblock %}
 </body>

@@ -1138,10 +1138,19 @@ overflow: hidden;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     float: left;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-size:18px;
+    background-position: 5px center;
 }
-
+.fa-weibo{
+    background-image: url('/static/image/weibo.png');
+}
+.fa-github{
+    background-image: url('/static/image/github.png');
+}
 .contact .tone:hover{
-    background: #ddd;
+    background-color: #ddd;
     color:#555;
 }
 

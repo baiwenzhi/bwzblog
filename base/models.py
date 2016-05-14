@@ -44,6 +44,7 @@ class Category(AbstractUserModel):
     class Meta:
         verbose_name = '分类'
         verbose_name_plural = '分类'
+        ordering = ['-create_time']
 
     def __unicode__(self):
         return self.name
@@ -61,6 +62,7 @@ class Blog(AbstractUserModel):
     class Meta:
         verbose_name = '博客'
         verbose_name_plural = '博客'
+        ordering = ['-create_time']
 
     def __unicode__(self):
         return self.title
@@ -96,7 +98,8 @@ class Comment(AbstractBaseModel):
     class Meta:
         verbose_name = '评论'
         verbose_name_plural = '评论'
-
+        ordering = ['-create_time']
+        
     def __unicode__(self):
         return self.id
 

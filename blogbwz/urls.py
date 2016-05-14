@@ -29,6 +29,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^$', 'base.views.index'),
+    url(r'^cron_analysis_day/$', 'analysis.views.cron_analysis_day'),
+    url(r'^cron_analysis_hour/$', 'analysis.views.cron_analysis_hour'),
     url(r'^', include('base.base_urls')),
     url(r'^', include('usercenter.usercenter_urls')),
 )

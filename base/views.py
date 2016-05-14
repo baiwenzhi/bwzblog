@@ -20,10 +20,10 @@ from django.db import transaction, connection
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from bs4 import BeautifulSoup
+import pylibmc as memcache
 
 def index(request):
     data = dict()
-
     param = dict()
     param['user_id'] = request.session['blog_owner'].id
     cursor = connection.cursor()

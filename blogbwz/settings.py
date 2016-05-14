@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'base',
+    'analysis',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -127,7 +128,7 @@ TEMPLATES = [
         },
     },
 ]
-
+SESSION_COOKIE_AGE = 60 * 120
 WSGI_APPLICATION = 'blogbwz.wsgi.application'
 AUTH_USER_MODEL = 'base.User'
 # Database

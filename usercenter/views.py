@@ -9,15 +9,18 @@ from django.shortcuts import render, render_to_response
 # Create your views here.
 from django.template import RequestContext
 from base.models import Category, Blog, User, Comment, User_visit
+from analysis.models import VisitCount ,VisitCountHour
 from base.util import paginate_datalist_ajax, sqls, SysUtil, FileUtil
 from django.db import transaction, connection
+import datetime
 
 @login_required
 def mycenter(request):
     data = dict()
-    categorys = Category.objects.filter(user = request.user, is_delete = False)
-    param =dict()
-    param['categorys'] = categorys
+    now_data = datetime.date.today()
+    laset_30 = (now_data-datetime.timedelta(days=30))
+    data['visit_counts'] = VisitCount.objects.filter(createdate__gt=laset_30).order_by('createdate')
+    data['visit_counts_24'] = VisitCountHour.objects.filter(create_time__gt=(datetime.datetime.now()-datetime.timedelta(hours=24))).order_by('create_time')
     return render_to_response('base/base_mycenter.html',data, context_instance=RequestContext(request))
 
 @login_required
