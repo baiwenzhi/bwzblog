@@ -114,6 +114,7 @@ function save_blog() {
             csrfmiddlewaretoken: csrfmiddlewaretoken,
             id: $('#blog_id').val(),
             title: title,
+            taglist:$("#tag_id").val(),
             content: content,
             category_id: $('#category_id').val()
 
@@ -243,6 +244,32 @@ function save_user_logo(self){
             }
         }
     });
+}
+function add_tag(self){
+    $(self).parent().next().show()
+}
+function cancle_add_tag(self){
+    $(self).parent().hide()
+}
+function add_tag_post(self){
+    var name = $(self).prev().val()
+    if (name==''){
+        show_error('标签不能为空')
+    }else{
+        show_tip('正在提交')
+        $.post('/usercenter/add_tag/',{
+            csrfmiddlewaretoken:csrfmiddlewaretoken,
+            name:name
+        },function(data){
+            if(data['is_succ']){
+                hide_tip();
+                cancle_add_tag(self)
+                $('#tag_id').append("<option value='"+data['tag_id']+"'>"+name+"</option")
+            }else{
+                show_error(data['msg'])
+            }
+        })
+    }
 }
 $(function(){
     $('#menubar a').bind('click',function(){

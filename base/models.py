@@ -49,6 +49,16 @@ class Category(AbstractUserModel):
     def __unicode__(self):
         return self.name
 
+class Tag(models.Model):
+    name = models.CharField(verbose_name='标签',max_length=50)
+
+    class Meta:
+        verbose_name = '标签'
+        verbose_name_plural = '标签'
+
+    def __unicode__(self):
+        return self.name
+
 class Blog(AbstractUserModel):
     title = models.CharField(verbose_name='标题', max_length=100, blank=True, null=True)
     category = models.ForeignKey(Category)
@@ -58,6 +68,7 @@ class Blog(AbstractUserModel):
     fav = models.BooleanField(verbose_name='推荐',default=False)
     is_delete = models.BooleanField(default=False)
     visit_count = models.IntegerField(verbose_name='浏览次数',default=0)
+    tag = models.ManyToManyField(Tag)
 
     class Meta:
         verbose_name = '博客'
@@ -122,4 +133,3 @@ class BackgroundImg(AbstractBaseModel):
 
     def __unicode__(self):
         return self.img
-

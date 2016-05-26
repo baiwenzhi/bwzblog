@@ -9,13 +9,13 @@ from django.db.models import Sum
 def cron_analysis_day(request):
 
     today = datetime.date.today()
-    count = VisitCountHour.objects.create(create_time__gt = today).aggregate(Sum('count'))
+    count = VisitCountHour.objects.filter(create_time__gt = today).aggregate(Sum('count'))
     vc = VisitCount.objects.filter(createdate=today)
     if vc:
-        vc[0].count = count
+        vc[0].count = count.get('count__sum') or 0
         vc[0].save()
     else:
-        VisitCount.objects.create(count = count)
+        VisitCount.objects.create(count = count.get('count__sum') or 0)
     return HttpResponse('success %s'%count)
 
 def cron_analysis_hour(request):

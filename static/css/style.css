@@ -95,7 +95,7 @@ select:focus,textarea:focus{
 }
 
 select {
-    display: inherit;
+    vertical-align: middle;
     width: 185px;
     height: 30px;
     margin-bottom: 10px
@@ -1156,4 +1156,7 @@ overflow: hidden;
 
 .long_input {
     min-width: 600px;
+}
+.multiple{
+    height: 120px;
 }

@@ -8,7 +8,7 @@ from django.shortcuts import render, render_to_response
 
 # Create your views here.
 from django.template import RequestContext
-from base.models import Category, Blog, User, Comment, User_visit
+from base.models import Category, Blog, User, Comment, User_visit, Tag
 from analysis.models import VisitCount ,VisitCountHour
 from base.util import paginate_datalist_ajax, sqls, SysUtil, FileUtil
 from django.db import transaction, connection
@@ -68,9 +68,11 @@ def write_blog(request):
     data = dict()
     if request.POST.get('blog_id'):
         blog = Blog.objects.get(id=request.POST.get('blog_id'),user = request.user,is_delete=False)
+        data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
         data['blog']=blog
     categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-create_time')
     data['categorys'] = categorys
+    data['tags'] = Tag.objects.all()
     return render_to_response('center_content/write_blog.html' , data, context_instance=RequestContext(request))
 
 @login_required
@@ -207,3 +209,23 @@ def visit(request):
     visits = User_visit.objects.all()
     paginate_datalist_ajax(visits,visits.count(),request,data,15)
     return render_to_response('center_content/visit.html' , data, context_instance=RequestContext(request))
+
+@login_required
+def add_tag(request):
+    data = dict()
+    try:
+        name = request.POST.get('name')
+        tag,created = Tag.objects.get_or_create(name=name)
+        if created:
+            data['is_succ'] = True
+            data['tag_id'] = tag.id
+        else:
+            data['is_succ'] = False
+            data['msg'] = '标签已存在'
+
+    except Exception,e:
+        print e
+        data['is_succ'] = False
+        data['msg'] = '添加失败'
+
+    return HttpResponse(json.dumps(data), content_type='application/json')

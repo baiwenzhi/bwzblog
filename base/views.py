@@ -12,7 +12,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from base.forms import PhotoForm
-from base.models import Category , Blog ,User, Active_Email, BackgroundImg, Comment
+from base.models import Category , Blog ,User, Active_Email, BackgroundImg, Comment, Tag
 from base.util import getUrlRespHtml, paginate_datalist, FileUtil ,SysUtil, \
      send_html_mail, user_visit,sqls
 from django.contrib.auth.decorators import login_required
@@ -212,7 +212,7 @@ def category(request,category_id):
 def blog(request,blog_name):
     data=dict()
     blog_id = blog_name.split('-')[1].split('.')[0]
-    blog=Blog.objects.get(id=blog_id,name=blog_name,is_delete=False)
+    blog=Blog.objects.select_related("category").get(id=blog_id,name=blog_name,is_delete=False)
     data['blog']=blog
     user_visit(request,blog)
     comments = Comment.objects.filter(blog = blog, is_delete = False, parent = None).order_by('-create_time')
@@ -243,6 +243,8 @@ def edit(request):
         if request.GET.get('blog_id'):
             blog = Blog.objects.get(id=request.GET.get('blog_id'),user = request.user,is_delete=False)
             data['blog']=blog
+            data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
+            data['tags'] = Tag.objects.all()
         return render_to_response('edit.html',data, context_instance=RequestContext(request))
     else:
         try:
@@ -250,6 +252,7 @@ def edit(request):
             id = request.POST.get('id')
             title = request.POST.get('title')
             content = request.POST.get('content')
+            tag_ids = request.POST.getlist('taglist[]')
             summary=''
             soup = BeautifulSoup(content)
             if soup.body:
@@ -266,13 +269,14 @@ def edit(request):
             blog.content=content
             blog.category_id=category_id
             blog.save()
+            blog.tag = tag_ids
             if id == '':
                 blog.name = SysUtil.random_str(20)+  "-%s.html"%blog.id
                 blog.save()
             data['is_succ']=True
-        except:
+        except Exception as e:
             data['is_succ']=False
-            data['msg'] = '保存失败'
+            data['msg'] = traceback.format_exc()
         return HttpResponse(json.dumps(data), content_type='application/json')
 
 def sub_comment(request):
@@ -294,7 +298,7 @@ def sub_comment(request):
             comment.user = request.user
         comment.save()
         data['is_succ'] = True
-    except Exception,e:
+    except Exception as e:
         data['msg'] = e.message
         data['is_succ'] = False
     return HttpResponse(json.dumps(data), content_type='application/json')

@@ -9,6 +9,7 @@
 * 部署sae方法可以参照新浪云文档，第三方模块在site-packages文件夹下，django1.8.12和bs4。
 * 本地调试python版本2.7 django版本1.8.12
 * settings文件中有些参数需要配置，sae 的账号，又拍云的账号空间。
+* 评论使用的是多说，请自行注册。
 * 创建表后需要创建管理员账号。博客后台使用管理员账号登陆。
 * sae数据库同步方法见<a href="http://www.baiwenzhi.com/blog/cqAFVlQsaJzBjIgoSGYd-12.html" target="_blank">博文</a>
 

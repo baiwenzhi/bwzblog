@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^usercenter/save_logo/$', 'usercenter.views.save_logo'),
     url(r'^usercenter/save_blog_name/$', 'usercenter.views.save_blog_name'),
     url(r'^usercenter/visit/$', 'usercenter.views.visit'),
+    url(r'^usercenter/add_tag/$', 'usercenter.views.add_tag'),
     url(r'^mycenter/$', 'usercenter.views.mycenter'),
     url(r'^fav_blog/$', 'usercenter.views.fav_blog'),
 ]

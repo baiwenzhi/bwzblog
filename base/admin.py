@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib import admin
-from base.models import Category , Blog ,User_visit, User ,Comment ,BackgroundImg ,Active_Email
+from base.models import *
 # Register your models here.
 
 class vs_user_visit(admin.ModelAdmin):
@@ -40,3 +40,4 @@ admin.site.register(User,vs_user)
 admin.site.register(Comment,vs_comment)
 admin.site.register(BackgroundImg,vs_img)
 admin.site.register(Active_Email,vs_Active_Email)
+admin.site.register(Tag)

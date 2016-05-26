@@ -10,9 +10,9 @@
                 {{ blog.title }}
             </h2>
             <div class="info">
-                <span><i class="fa fa-calendar"></i>&nbsp;{{ blog.create_time|date:'Y-m-d' }}</span>
-                <span><i class="fa fa-mouse-pointer"></i>&nbsp;{{ blog.visit_count }}</span>
-                <span><i class="fa fa-comment-o"></i>&nbsp;{{ comments|length }}</span>
+                <span><i class="fa fa-calendar">时间</i>&nbsp;{{ blog.create_time|date:'Y-m-d' }}</span>
+                <span><i class="fa fa-mouse-pointer">浏览</i>&nbsp;{{ blog.visit_count }}</span>
+                <span><i class="fa fa-comment-o">评论</i>&nbsp;{{ comments|length }}</span>
                 <span>分类：<a href="/category/?category_id={{ blog.category.id }}">{{ blog.category.name }}</a></span>
             </div>
             <div>
@@ -26,96 +26,90 @@
         <div id="qcode">
 
         </div>
-        {% if comments %}
-        <div class="comment_title">
-            评论
-        </div>
-        {% endif %}
-        <div class="comments">
-            {% for comment in comments %}
-                <div class="comment">
-                    <div class="c_logo"><img src="{% if comment.user %}{{ MEDIA_URL }}{{ comment.user.logo|default_if_none:'' }}{% else %}/static/image/headlogo.jpg{% endif %}" alt="头像"/></div>
-                    <div class="c_right">
-                        <div class="c_bar info">
-                            <a href="{{ comment.web_url|default_if_none:'' }}" target="_blank">{{ comment.name }}</a><br/>
-                            <span>{{ comment.create_time|date:'Y-m-d H:i:s' }}</span>
-                            <a  onclick="t_comment('{{ comment.id }}','{{ comment.name }}')">回复</a>
-                        </div>
-                        <p>
-                            {{ comment.content|safe }}
-                        </p>
-                        {% get_child_comment comment %}
-                        {% if child_comments %}
-                            {% for c_comment in child_comments %}
-                                <div class="comment">
-                                    <div class="c_logo"><img src="{% if c_comment.user %}{{ MEDIA_URL }}{{ c_comment.user.logo|default_if_none:'' }}{% else %}/static/image/headlogo.jpg{% endif %}" alt="头像"/></div>
-                                    <div class="c_right">
-                                        <div class="c_bar info">
-                                            <a href="{{ c_comment.web_url|default_if_none:'' }}"    target="_blank">{{ c_comment.name }}</a><br/>
-                                            <span>{{ c_comment.create_time|date:'Y-m-d H:i:s' }}</span>
-                                            <a  onclick="t_comment('{{ comment.id }}','{{ c_comment.name }}')">回复</a>
-                                        </div>
-                                        <p>
-                                            {{ c_comment.content|safe }}
-                                        </p>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-            {% empty %}
-                暂无评论
-            {% endfor %}
-        </div>
+{#        {% if comments %}#}
+{#        <div class="comment_title">#}
+{#            评论#}
+{#        </div>#}
+{#        {% endif %}#}
+{#        <div class="comments">#}
+{#            {% for comment in comments %}#}
+{#                <div class="comment">#}
+{#                    <div class="c_logo"><img src="{% if comment.user %}{{ MEDIA_URL }}{{ comment.user.logo|default_if_none:'' }}{% else %}/static/image/headlogo.jpg{% endif %}" alt="头像"/></div>#}
+{#                    <div class="c_right">#}
+{#                        <div class="c_bar info">#}
+{#                            <a href="{{ comment.web_url|default_if_none:'' }}" target="_blank">{{ comment.name }}</a><br/>#}
+{#                            <span>{{ comment.create_time|date:'Y-m-d H:i:s' }}</span>#}
+{#                            <a  onclick="t_comment('{{ comment.id }}','{{ comment.name }}')">回复</a>#}
+{#                        </div>#}
+{#                        <p>#}
+{#                            {{ comment.content|safe }}#}
+{#                        </p>#}
+{#                        {% get_child_comment comment %}#}
+{#                        {% if child_comments %}#}
+{#                            {% for c_comment in child_comments %}#}
+{#                                <div class="comment">#}
+{#                                    <div class="c_logo"><img src="{% if c_comment.user %}{{ MEDIA_URL }}{{ c_comment.user.logo|default_if_none:'' }}{% else %}/static/image/headlogo.jpg{% endif %}" alt="头像"/></div>#}
+{#                                    <div class="c_right">#}
+{#                                        <div class="c_bar info">#}
+{#                                            <a href="{{ c_comment.web_url|default_if_none:'' }}"    target="_blank">{{ c_comment.name }}</a><br/>#}
+{#                                            <span>{{ c_comment.create_time|date:'Y-m-d H:i:s' }}</span>#}
+{#                                            <a  onclick="t_comment('{{ comment.id }}','{{ c_comment.name }}')">回复</a>#}
+{#                                        </div>#}
+{#                                        <p>#}
+{#                                            {{ c_comment.content|safe }}#}
+{#                                        </p>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            {% endfor %}#}
+{#                        {% endif %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% empty %}#}
+{#                暂无评论#}
+{#            {% endfor %}#}
+{#        </div>#}
+{##}
+{#        <div class="add_comment" id="add_comment">#}
+{#            <div class="title_box">#}
+{#                添加评论#}
+{#            </div>#}
+{#            <input type="hidden" id="blog_name" value="{{ blog.name }}"/>#}
+{#            {% if not request.user.is_authenticated %}#}
+{#                <p>您正在以游客身份访问</p>#}
+{#            {% else %}#}
+{#                <p>登陆用户：{{ request.user.blog_name }}</p>#}
+{#            {% endif %}#}
+{#            <p class="replay_p" id="replay_p">#}
+{#                <input type="hidden" name="parent_id" id="parent_id" value=""/>#}
+{#                @<span></span>&nbsp;&nbsp;&nbsp;<a onclick="cancle_replay()">取消回复</a>#}
+{#            </p>#}
+{#            {% if not request.user.is_authenticated %}#}
+{#                <p>#}
+{#                    <input class="c_input" type="text" name="nickname" placeholder="昵称"/>#}
+{#                </p>#}
+{#                <p>#}
+{#                    <input class="c_input" type="text" name="url" placeholder="您的网站"/>#}
+{#                </p>#}
+{#            {% else %}#}
+{#                <input type="hidden" name="nickname" value="{{ request.user.blog_name }}"/>#}
+{#                <input type="hidden" name="url" value="{{ LOCAL_HOST }}/homepage/{{ request.user.name }}"/>#}
+{#            {% endif %}#}
+{#            <div class="Input_Box">#}
+{#              <textarea class="Input_text"name="content"></textarea>#}
+{#              <div class="faceDiv face"> </div>#}
+{#              <div class="Input_Foot">#}
+{#                  <a class="imgBtn" href="javascript:void(0);"></a><a class="postBtn" onclick="sub_comment()">确定</a>#}
+{#              </div>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="ds-thread" data-thread-key="{{ blog.id }}" data-title="{{ blog.title }}" data-url="{{ LOCAL_HOST }}/blog/{{ blog.name }}"></div>
 
-        <div class="add_comment" id="add_comment">
-            <div class="title_box">
-                添加评论
-            </div>
-            <input type="hidden" id="blog_name" value="{{ blog.name }}"/>
-            {% if not request.user.is_authenticated %}
-                <p>您正在以游客身份访问</p>
-            {% else %}
-                <p>登陆用户：{{ request.user.blog_name }}</p>
-            {% endif %}
-            <p class="replay_p" id="replay_p">
-                <input type="hidden" name="parent_id" id="parent_id" value=""/>
-                @<span></span>&nbsp;&nbsp;&nbsp;<a onclick="cancle_replay()">取消回复</a>
-            </p>
-            {% if not request.user.is_authenticated %}
-                <p>
-                    <input class="c_input" type="text" name="nickname" placeholder="昵称"/>
-                </p>
-                <p>
-                    <input class="c_input" type="text" name="url" placeholder="您的网站"/>
-                </p>
-            {% else %}
-                <input type="hidden" name="nickname" value="{{ request.user.blog_name }}"/>
-                <input type="hidden" name="url" value="{{ LOCAL_HOST }}/homepage/{{ request.user.name }}"/>
-            {% endif %}
-            <div class="Input_Box">
-              <textarea class="Input_text"name="content"></textarea>
-              <div class="faceDiv face"> </div>
-              <div class="Input_Foot">
-                  <a class="imgBtn" href="javascript:void(0);"></a><a class="postBtn" onclick="sub_comment()">确定</a>
-              </div>
-            </div>
-        </div>
     </div>
 
 {% endblock %}
 
 {% block js-content %}
-    <script>
-        //百度推送链接
-        (function () {
-            var bp = document.createElement('script');
-            bp.src = '//push.zhanzhang.baidu.com/push.js';
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(bp, s);
-        })();
-    </script>
+  
 
     <script type="text/javascript" src="/static/js/faceinput.js"></script>
     <script type="text/javascript" src="/static/js/jquerycode.js"></script>
@@ -124,13 +118,18 @@
         //为了在编辑器之外能展示高亮代码
         SyntaxHighlighter.highlight();
         //调整左右对齐
-{#        for (var i = 0, di; di = SyntaxHighlighter.highlightContainers[i++];) {#}
-{#            var tds = di.getElementsByTagName('td');#}
-{#            for (var j = 0, li, ri; li = tds[0].childNodes[j]; j++) {#}
-{#                ri = tds[1].firstChild.childNodes[j];#}
-{#                ri.style.height = li.style.height = ri.offsetHeight + 'px';#}
-{#            }#}
-{#        }#}
-    </script>
 
+    </script>
+    <script type="text/javascript">
+var duoshuoQuery = {short_name:"baiwenzhi"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+<!-- 多说公共JS代码 end -->
 {% endblock %}
