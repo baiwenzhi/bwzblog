@@ -25,7 +25,7 @@
         {% for blog in recList %}
             <tr class="blog_item c_{{ blog.category_id }}">
                 <td><a href="/blog/{{ blog.name }}" target="_blank">{{ blog.title }}</a></td>
-                <td>{{ blog.category_name }}</td>
+                <td>{{ blog.category.name }}</td>
                 <td>{{ blog.visit_count }}</td>
                 <td>{{ blog.comment_count }}</td>
                 <td>{{ blog.create_time|date:'Y-m-d H:i:s' }}</td>

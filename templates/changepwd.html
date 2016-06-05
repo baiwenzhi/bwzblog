@@ -33,7 +33,7 @@
                 <input class="input_btn" style="margin: 0 auto;width: 100%;" type="button" value="提交"  onclick="changepwd()">
             </div>
             <div class="input_div" style="text-align: right;">
-                <a href="/login/">返回登陆</a>
+                <a href="/login">返回登陆</a>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
                 },function(data){
                     if(data['is_succ']){
 
-                        window.location.href='/login/'
+                        window.location.href='/login'
                     }else{
                         show_error(data['msg'])
                     }

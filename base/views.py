@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from base.forms import PhotoForm
 from base.models import Category , Blog ,User, Active_Email, BackgroundImg, Comment, Tag
 from base.util import getUrlRespHtml, paginate_datalist, FileUtil ,SysUtil, \
-     send_html_mail, user_visit,sqls
+     send_html_mail, user_visit,sqls, Duoshuo
 from django.contrib.auth.decorators import login_required
 from django.db import transaction, connection
 from django.views.decorators.csrf import csrf_exempt
@@ -24,14 +24,9 @@ import pylibmc as memcache
 
 def index(request):
     data = dict()
-    param = dict()
-    param['user_id'] = request.session['blog_owner'].id
-    cursor = connection.cursor()
-    cursor.execute(sqls.sql_blog,param)
-    dealList =SysUtil.dictfetchall(cursor)
-
-    paginate_datalist(dealList, len(dealList), request, data, 15)
     data['menu'] = 'home'
+    blogs = Blog.objects.prefetch_related('tag').select_related('category').filter(is_delete = False).order_by('-create_time')
+    paginate_datalist(blogs, blogs.count(), request, data, 15)
     return render_to_response('homepage.html',data, context_instance=RequestContext(request))
 
 def get_background(request):
@@ -199,38 +194,27 @@ def photo_upload(request):
 def category(request,category_id):
     data=dict()
     data['category_id'] = int(category_id)
-    param = dict()
-    param['user_id'] = request.session['blog_owner'].id
-    param['category_id'] = category_id
-    cursor = connection.cursor()
-    cursor.execute(sqls.sql_category_blog,param)
-    dealList =SysUtil.dictfetchall(cursor)
-    paginate_datalist(dealList, len(dealList), request, data, 15)
-    data['menu']='categorys'
+    blogs = Blog.objects.prefetch_related('tag').select_related('category').filter(is_delete = False,category_id=category_id).order_by('-create_time')
+    paginate_datalist(blogs, blogs.count(), request, data, 15)
+    data['menu']='category'
     return render_to_response('homepage.html',data, context_instance=RequestContext(request))
 
 def blog(request,blog_name):
     data=dict()
     blog_id = blog_name.split('-')[1].split('.')[0]
-    blog=Blog.objects.select_related("category").get(id=blog_id,name=blog_name,is_delete=False)
+    blog=Blog.objects.prefetch_related('tag').select_related("category").get(id=blog_id,name=blog_name,is_delete=False)
     data['blog']=blog
     user_visit(request,blog)
-    comments = Comment.objects.filter(blog = blog, is_delete = False, parent = None).order_by('-create_time')
-    data['comments'] = comments
+    # comments = Comment.objects.filter(blog = blog, is_delete = False, parent = None).order_by('-create_time')
+    # data['comments'] = comments
     return render_to_response('blog.html',data, context_instance=RequestContext(request))
 
 def search(request):
     data = dict()
     keywords = request.GET.get('keywords')
     data['keywords'] = keywords
-    param = dict()
-    param['user_id'] = request.session['blog_owner'].id
-    param['keywords'] = keywords
-    cursor = connection.cursor()
-    cursor.execute(sqls.sql_search_blog%param)
-    dealList =SysUtil.dictfetchall(cursor)
-
-    paginate_datalist(dealList, len(dealList), request, data, 15)
+    blogs = Blog.objects.prefetch_related('tag').select_related('category').filter(is_delete = False,title__contains=keywords).order_by('-create_time')
+    paginate_datalist(blogs, blogs.count(), request, data, 15)
     data['menu'] = 'home'
     return render_to_response('homepage.html',data, context_instance=RequestContext(request))
 
@@ -306,18 +290,41 @@ def sub_comment(request):
 def fav(request):
     data=dict()
     data['menu']='fav'
-    param = dict()
-    param['user_id'] = request.session['blog_owner'].id
-    param['fav'] = 1
-    cursor = connection.cursor()
-    cursor.execute(sqls.sql_fav_blog,param)
-    dealList =SysUtil.dictfetchall(cursor)
-    paginate_datalist(dealList, len(dealList), request, data, 15)
+    blogs = Blog.objects.prefetch_related('tag').select_related('category').filter(is_delete = False,fav=True).order_by('-create_time')
+    paginate_datalist(blogs, blogs.count(), request, data, 15)
     return render_to_response('homepage.html',data, context_instance=RequestContext(request))
 
 def timeline(request):
     data=dict()
     data['menu']='timeline'
-    blogs = Blog.objects.filter(user = request.session['blog_owner'],is_delete = False).order_by('-create_time')
+    blogs = Blog.objects.filter(user = request.session['blog_owner'],is_delete = False).order_by('-create_time').values('title','name','create_time','id')
     paginate_datalist(blogs, len(blogs), request, data, 15)
     return render_to_response('timeline.html',data, context_instance=RequestContext(request))
+
+def tag(request,tag_id):
+    data = dict()
+    tag = Tag.objects.get(id = tag_id)
+    blogs = tag.blog_set.prefetch_related('tag').select_related('category').all()
+    paginate_datalist(blogs,blogs.count(),request,data,15)
+    return render_to_response('homepage.html',data,context_instance=RequestContext(request))
+
+@csrf_exempt
+def return_comment(request):
+    user = User.objects.all()[0]
+    duoshuo = Duoshuo()
+    res = duoshuo.tobu(user.duoshuo_logid)
+    logid = user.duoshuo_logid
+    if res['code'] == 0:
+        if len(res['response'])>0:
+            for comlog in res['response']:
+                logid=comlog['log_id']
+                try:
+                    blog = Blog.objects.get(id = comlog['meta']['thread_key'])
+                    blog.comment_count += 1
+                    blog.save()
+                except:
+                    continue
+            user.duoshuo_logid = logid
+            user.save()
+
+    return HttpResponse(json.dumps(res),content_type='application/json')

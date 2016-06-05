@@ -10,7 +10,7 @@
         <option value="">选择分类</option>
         {% for category in categorys %}
             <option value="{{ category.id }}"
-                    {% if blog.category_id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
+                    {% if blog.category.id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
         {% endfor %}
     </select>
 </p>

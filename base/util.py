@@ -161,6 +161,27 @@ def getip(ip):
 
     return dizhi+','+isp
 
+class Duoshuo:
+
+    def __init__(self):
+        self.short_name = settings.DUOSHUO['short_name']
+        self.secret = settings.DUOSHUO['secret']
+
+    def get_comment_count_by_ids(self,str_ids):
+        url = "http://api.duoshuo.com/threads/counts.json?short_name=%s&threads=%s"%(self.short_name,str_ids)
+        res = getUrlRespHtml(url)
+        dict_c = json.loads(res)
+        print (dict_c)
+
+    def tobu(self,since_id):
+        if since_id:
+            url = "http://api.duoshuo.com/log/list.json?short_name=%s&secret=%s&since_id=%s"%(self.short_name,self.secret,since_id)
+        else:
+            url = "http://api.duoshuo.com/log/list.json?short_name=%s&secret=%s"%(self.short_name,self.secret)
+        res = getUrlRespHtml(url)
+        dict_c = json.loads(res)
+        return dict_c
+
 class DateUtil:
     @classmethod
     def getNowYmdTsp(cls):

@@ -6,14 +6,23 @@
 {% block right-content %}
     <div class="blog_content">
         <div class="blog_h">
-            <h2>
-                {{ blog.title }}
-            </h2>
+            <div class="blog_title">
+                <div class="pre-cat">
+                    <div class="pre-catinner pre_btn">
+                        <a href="/category/{{ blog.category_id }}">{{ blog.category.name }}</a>
+                    </div>
+                    <div class="pre-catarrow">
+                    </div>
+                </div>
+                <h2>{{ blog.title }}</h2>
+            </div>
             <div class="info">
                 <span><i class="fa fa-calendar">时间</i>&nbsp;{{ blog.create_time|date:'Y-m-d' }}</span>
                 <span><i class="fa fa-mouse-pointer">浏览</i>&nbsp;{{ blog.visit_count }}</span>
-                <span><i class="fa fa-comment-o">评论</i>&nbsp;{{ comments|length }}</span>
-                <span>分类：<a href="/category/?category_id={{ blog.category.id }}">{{ blog.category.name }}</a></span>
+                <span><i class="fa fa-comment-o">评论</i>&nbsp;{{ blog.comment_count }}</span>
+                {% for tag in blog.tag.all %}
+                <span class="label"><a href="/tag/{{ tag.id }}">{{ tag.name }}</a></span>
+                {% endfor %}
             </div>
             <div>
                 {{ blog.content|safe }}

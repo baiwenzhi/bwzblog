@@ -64,6 +64,22 @@
     #uptop:hover{
         background-color:rgba(164, 170, 180, 0.8) ;
     }
+    .info .label{
+        float: right;
+        background-color: #468847;
+        display: inline-block;
+        padding: 2px 4px;
+        font-weight: bold;
+        line-height: 14px;
+        color: #ffffff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 3px;
+    }
+    .info .label a{
+        color:#fff;
+    }
 }
 
 @media screen and (max-width: 960px) {
@@ -107,6 +123,9 @@
         background-color: rgba(164, 170, 180, 0.5)
     }
     .change_bck{
+        display: none;
+    }
+    .info .label{
         display: none;
     }
 }

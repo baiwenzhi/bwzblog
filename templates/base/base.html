@@ -47,7 +47,7 @@
                                 <span class="bck_mb"></span>
                             </a>
                         </li>
-                        <ul id="category" class="hide" {% if menu == 'categorys' %}style="height:{%  widthratio 39 1 request.session.categorys|length %}px"{% endif %}>
+                        <ul id="category" class="hide" {% if menu == 'category' %}style="height:{%  widthratio 39 1 request.session.categorys|length %}px"{% endif %}>
                             {% for category in request.session.categorys %}
                                 <li {% if category.id == category_id %}class="current-click"{% endif %}>
                                     <a href="/category/{{ category.id }}" >

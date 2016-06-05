@@ -193,6 +193,12 @@ SERVER_EMAIL = 'xxxx博客<xxxx@sina.com>'
 
 #易源api，获取ip所在地，可能影响打开博客速度，请自行注释base.views.blog方法中的user_visit(request,blog)
 SHOWAPI = {
-    "appid":"xxxx",
-    "secret":"xxxxx"
+    "appid":"xxx",
+    "secret":"xxxx"
+}
+
+#多说
+DUOSHUO = {
+    'short_name':'xxx',
+    'secret':"xxxx"
 }

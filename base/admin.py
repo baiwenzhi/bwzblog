@@ -13,12 +13,12 @@ class vs_category(admin.ModelAdmin):
     search_fields=('name',)
 
 class vs_blog(admin.ModelAdmin):
-    list_display = ('create_time','user','title','category','name','fav','is_delete')
+    list_display = ('title','create_time','user','category','name','fav','is_delete','visit_count','comment_count')
     list_filter=('create_time',)
     search_fields=('title',)
 
 class vs_user(admin.ModelAdmin):
-    list_display = ('username','email','date_joined','name','blog_name','logo','is_superuser','is_staff','is_active')
+    list_display = ('username','email','date_joined','name','blog_name','logo','is_superuser','is_staff','is_active','duoshuo_logid')
     search_fields=('username',)
 
 class vs_comment(admin.ModelAdmin):
@@ -32,6 +32,8 @@ class vs_img(admin.ModelAdmin):
 
 class vs_Active_Email(admin.ModelAdmin):
     list_display = ('url','create_time')
+
+
 
 admin.site.register(Category,vs_category)
 admin.site.register(Blog,vs_blog)

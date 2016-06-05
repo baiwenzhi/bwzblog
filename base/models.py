@@ -20,6 +20,7 @@ class User(AbstractUser):
     name = models.CharField(verbose_name="短名",max_length=100)
     blog_name = models.CharField(verbose_name="博客名",max_length=100,default=None, blank=True, null=True)
     logo = models.CharField(max_length=100, default=None, blank=True, null=True)
+    duoshuo_logid = models.CharField(max_length=50,blank=True)
 
     def __unicode__(self):
         return self.username
@@ -69,6 +70,7 @@ class Blog(AbstractUserModel):
     is_delete = models.BooleanField(default=False)
     visit_count = models.IntegerField(verbose_name='浏览次数',default=0)
     tag = models.ManyToManyField(Tag)
+    comment_count = models.PositiveIntegerField(verbose_name='评论次数',default=0)
 
     class Meta:
         verbose_name = '博客'

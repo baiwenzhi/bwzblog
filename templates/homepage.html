@@ -15,7 +15,7 @@
         <div class="blog_title">
             <div class="pre-cat">
                 <div class="pre-catinner pre_btn">
-                    <a href="/category/{{ blog.category_id }}">{{ blog.category_name }}</a>
+                    <a href="/category/{{ blog.category_id }}">{{ blog.category.name }}</a>
                 </div>
                 <div class="pre-catarrow">
                 </div>
@@ -30,20 +30,21 @@
             <span><i class="fa fa-calendar">时间</i>&nbsp;{{ blog.create_time|date:'Y-m-d' }}</span>
             <span><i class="fa fa-mouse-pointer">浏览</i>&nbsp;{{ blog.visit_count }}</span>
             <span><i class="fa fa-comment-o">评论</i>&nbsp;{{ blog.comment_count }}</span>
+            {% for tag in blog.tag.all %}
+            <span class="label"><a href="/tag/{{ tag.id }}">{{ tag.name }}</a></span>
+            {% endfor %}
         </div>
 
         <div class="content">
             {{ blog.summary|default_if_none:''|safe }}
             <p class="r_pa">
                 {% if request.user.is_authenticated %}
-                    {% if request.user == request.session.blog_owner %}
-                        <a href="/edit/?type=1&blog_id={{ blog.id }}" target="_blank">编辑</a>
-                        <a onclick="bind_dialog_yes(del_blog,'你确定要删除这个博客吗？删除后将无法访问此博客！',this,'{{ blog.id }}')">删除</a>
-                        {% if blog.fav == 1 %}
-                            <a fav="0" onclick="fav_blog(this,'{{ blog.id }}')"  style="color:red;">取消推荐</a>
-                        {% else %}
-                            <a fav="1" onclick="fav_blog(this,'{{ blog.id }}')">设为推荐</a>
-                        {% endif %}
+                    <a href="/edit/?type=1&blog_id={{ blog.id }}" target="_blank">编辑</a>
+                    <a onclick="bind_dialog_yes(del_blog,'你确定要删除这个博客吗？删除后将无法访问此博客！',this,'{{ blog.id }}')">删除</a>
+                    {% if blog.fav == 1 %}
+                        <a fav="0" onclick="fav_blog(this,'{{ blog.id }}')"  style="color:red;">取消推荐</a>
+                    {% else %}
+                        <a fav="1" onclick="fav_blog(this,'{{ blog.id }}')">设为推荐</a>
                     {% endif %}
                 {% endif %}
             </p>

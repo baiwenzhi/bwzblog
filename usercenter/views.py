@@ -48,26 +48,21 @@ def fav_blog(request):
 def categorys(request):
     data = dict()
     categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-update_time')
-    paginate_datalist_ajax(categorys,len(categorys),request,data,15)
+    paginate_datalist_ajax(categorys,categorys.count(),request,data,15)
     return render_to_response('center_content/category.html' , data, context_instance=RequestContext(request))
 
 @login_required
 def blogs(request):
     data = dict()
-    param = dict()
-    param['user_id'] = request.user.id
-    cursor = connection.cursor()
-    cursor.execute(sqls.sql_usercenter_blogs,param)
-    dealList =SysUtil.dictfetchall(cursor)
-
-    paginate_datalist_ajax(dealList,len(dealList),request,data,15)
+    blogs = Blog.objects.select_related('category').filter(is_delete = False).order_by('-create_time')
+    paginate_datalist_ajax(blogs,blogs.count(),request,data,15)
     return render_to_response('center_content/blogs.html' , data, context_instance=RequestContext(request))
 
 @login_required
 def write_blog(request):
     data = dict()
     if request.POST.get('blog_id'):
-        blog = Blog.objects.get(id=request.POST.get('blog_id'),user = request.user,is_delete=False)
+        blog = Blog.objects.prefetch_related('tag').select_related('category').get(id=request.POST.get('blog_id'),user = request.user,is_delete=False)
         data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
         data['blog']=blog
     categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-create_time')
