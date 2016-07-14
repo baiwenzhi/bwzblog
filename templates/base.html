@@ -103,8 +103,12 @@
 <script>
     var duoshuoQuery = {short_name:"baiwenzhi"}
     if(window.innerWidth>960){
+        {% if background %}
         var url = "url('{{ background }}')";
         document.body.style.cssText='background-image:'+url
+        {% else %}
+            document.body.style.cssText='background:#434343'
+        {% endif %}
     }
 </script>
 {#<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>#}

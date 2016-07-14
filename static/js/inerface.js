@@ -117,6 +117,7 @@ mainapp.controller("menuController",function($scope,$http,fac_page_active){
         }
     }
     $scope.active = function(menu){
+        window.scrollTo(0,0)
         $scope.active_page=menu
     }
     $scope.$on('pagechange',function(){

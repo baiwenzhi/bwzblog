@@ -434,7 +434,6 @@ textarea {
 
 .blogs {
     position: relative;
-    padding: 10px 2%;
     overflow: hidden
 }
 
@@ -977,7 +976,7 @@ input:focus {
 }
 
 .footer {
-    margin: 20px 2%;
+    margin-top:20px;
     color: #333;
     font-size: 1.4rem;
     padding: 20px 0 20px 20px;
@@ -1128,7 +1127,6 @@ input:focus {
 }
 
 .s_ul {
-    margin: 0 2%;
     max-width: 800px;
     position: relative;
     background: #fff
@@ -1212,7 +1210,7 @@ input:focus {
     padding: 10px;
     overflow: hidden;
     background: #fff;
-    margin: 20px 2%
+    margin: 10px 2%
 }
 
 .contact {
@@ -1315,7 +1313,7 @@ input:focus {
         float: right;
         width: 700px;
         text-align: left;
-        padding: 10px;
+        padding: 20px;
         overflow: hidden;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
@@ -1414,6 +1412,9 @@ input:focus {
     }
     .search_mu{
         padding: 5px 1px;
+    }
+    .blogs{
+        padding: 0 10px;
     }
 }
 
