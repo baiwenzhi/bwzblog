@@ -1,0 +1,29 @@
+<div class="blog_content">
+    <div class="blog_h">
+        <div class="blog_title">
+            <div class="pre-cat">
+                <div class="pre-catinner pre_btn">
+                    <a ng-href="/category/">{{ blog.category.name }}</a>
+                </div>
+                <div class="pre-catarrow">
+                </div>
+            </div>
+            <h2>{{ blog.title }}</h2>
+        </div>
+        <div class="info">
+            <span><i class="fa fa-calendar">时间</i>&nbsp;{{ blog.create_time|date:'yyyy-MM-dd' }}</span>
+            <span><i class="fa fa-mouse-pointer">浏览</i>&nbsp;{{ blog.visit_count }}</span>
+            <span><i class="fa fa-comment-o">评论</i>&nbsp;{{ blog.comment_count }}</span>
+
+            <span class="label" ng-repeat="tag_item in blog.tag"><a href="#/tag/{{ tag_item.id }}">{{ tag_item.name }}</a></span>
+        </div>
+        <div ng-bind-html="blog.content">
+
+        </div>
+        <div id="duoshuocontent">
+
+        </div>
+    </div>
+</div>
+
+

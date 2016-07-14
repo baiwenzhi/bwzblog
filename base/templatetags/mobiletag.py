@@ -1,6 +1,5 @@
 #coding:utf-8
 from django import template
-from base.models import Comment
 
 register=template.Library()
 
@@ -30,22 +29,5 @@ class do_get_pages(template.Node):
             ranges=range(page-4,page+6)
 
         context['range']=ranges
-        return  ''
-
-@register.tag(name="get_child_comment")
-def get_child_comment(parser, token):
-    try:
-        tag_name,comment = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError("%r tag requires exactly one arguments" % token.contents.split()[0])
-    return do_get_child_comment(comment)
-
-class do_get_child_comment(template.Node):
-    def __init__(self,comment):
-        self.comment = template.Variable(comment)
-    def render(self, context):
-        comment = self.comment.resolve(context)
-        child_comments = Comment.objects.filter(parent = comment, is_delete = False).order_by('-create_time')
-        context['child_comments']=child_comments
         return  ''
 

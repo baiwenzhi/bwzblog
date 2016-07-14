@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {{ request.session.blog_owner.blog_name }}
+    </title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="keywords" content="柏文智 柏文智的博客"/>
+    <meta name="description" content="柏文智 柏文智的博客"/>
+    <meta property="wb:webmaster" content="72d1a537734b083b" />
+    <link href="/static/image/favicon.ico" rel="icon" type="image/x-icon" />
+    <link href="/static/image/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css?v1" />
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+{#    <link rel="stylesheet" type="text/css" href="/static/ueditor1_3_6-utf8-jsp/third-party/SyntaxHighlighter/shCoreDefault.css"/>#}
+    <link rel="stylesheet" href="/static/md/css/editormd.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="div_wrap">
+
+        <div id="main-left" ng-controller="menuController">
+            <div class="menu_content">
+                <div class="blog_logo">
+                    <a href="#blogs">
+                        <img src="/static/image/BWZ.png" style="width:100%;">
+                    </a>
+                </div>
+
+                <div id="menubar">
+                    <ul>
+                        <li ng-class="{true:'current-click'}[active_page=='blogs']">
+                            <a href="#blogs" ng-click="active('blogs')">
+                                <span class="menu_text">首页</span>
+                                <span class="bck_mb"></span>
+                            </a>
+
+                        </li>
+                        <li ng-click="o_c_categorys()" ng-class="{true: 'current-click'}[menu_active]">
+                            <a>
+                                <span class="menu_text">分类<span class="menu-icon"></span></span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                        <ul id="category" class="hide" ng-style="categorymenu_style">
+                            <li ng-repeat="category in categorys" ng-class="{true: 'current-click'}[active_page=='category/'+category.id]">
+                                <a ng-href="#/category/{% templatetag openvariable %}category.id{% templatetag closevariable %}" ng-click="active('category/'+category.id)">
+                                    <span class="menu_text_c" ng-bind="category.name"></span>
+                                    <span class="bck_mb_c"></span>
+                                </a>
+                            </li>
+                        </ul>
+                        <li ng-class="{true:'current-click'}[active_page=='fav']">
+                            <a href="#/fav"  ng-click="active('fav')">
+                                <span class="menu_text">推荐</span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                        <li ng-class="{true:'current-click'}[active_page=='timeline']">
+                            <a href="#/timeline"  ng-click="active('timeline')">
+                                <span class="menu_text">时间轴</span>
+                                <span class="bck_mb"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+            <div class="me_c">
+                <div class="log_img">
+                    <img src="{% if request.session.blog_owner.logo %}{{ MEDIA_URL }}{{ request.session.blog_owner.logo }}{% else %}/static/image/headlogo.jpg{% endif %}">
+
+                </div>
+                <div class="contact">
+                    <a href="http://weibo.com/baiwenzhi" target="_blank" class="tone">
+                        <i class="fa fa-weibo"></i>&nbsp;weibo
+                    </a>
+                    <a href="https://github.com/baiwenzhi" target="_blank" class="tone">
+                        <i class="fa fa-github"></i>&nbsp;github
+                    </a>
+                </div>
+            </div>
+            <div class="search_mu">
+                <form onsubmit="search()">
+                    <input  placeholder="Search" style="width:100%;text-align:center" id="search_keywords"/>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-right">
+            <div ng-view>
+
+            </div>
+            <footer class="footer">
+                Designed by <span class="info">bwz</span>
+            </footer>
+        </div>
+    </div>
+</div>
+<div id="uptop" onclick="Top()"></div>
+<script>
+    var duoshuoQuery = {short_name:"baiwenzhi"}
+    if(window.innerWidth>960){
+        var url = "url('{{ background }}')";
+        document.body.style.cssText='background-image:'+url
+    }
+</script>
+{#<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.8/jquery.min.js"></script>#}
+{#<script src="//cdn.jsdelivr.net/velocity/1.1.0/velocity.min.js"></script>#}
+{#<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/third-party/SyntaxHighlighter/shCore.js"></script>#}
+<script src="http://static.duoshuo.com/embed.js"></script>
+<script src="http://cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
+<script src="http://cdn.bootcss.com/angular.js/1.4.6/angular-route.min.js"></script>
+<script src="http://cdn.bootcss.com/angular.js/1.4.6/angular-sanitize.js"></script>
+<!--script data-main="/static/js/main.js" src="/static/js/require.js"></script-->
+<script src="/static/js/inerface.js"></script>
+
+</body>
+</html>

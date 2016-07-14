@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import traceback
+from bs4 import BeautifulSoup,element
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, render_to_response
-
-# Create your views here.
 from django.template import RequestContext
-from base.models import Category, Blog, User, Comment, User_visit, Tag
+from django.views.decorators.csrf import csrf_exempt
+from base.models import Category, Blog, User, User_visit, Tag, BlogMd
 from analysis.models import VisitCount ,VisitCountHour
 from base.util import paginate_datalist_ajax, sqls, SysUtil, FileUtil
 from django.db import transaction, connection
@@ -33,7 +33,7 @@ def fav_blog(request):
     data=dict()
     try:
         with transaction.atomic():
-            blog = Blog.objects.get(id = request.POST.get('id'),user = request.user)
+            blog = Blog.objects.get(id = request.POST.get('id'))
             blog.fav = int(request.POST.get('fav'))
             blog.save()
             data['is_succ'] = True
@@ -47,7 +47,7 @@ def fav_blog(request):
 @login_required
 def categorys(request):
     data = dict()
-    categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-update_time')
+    categorys = Category.objects.filter(is_delete = False).order_by('-update_time')
     paginate_datalist_ajax(categorys,categorys.count(),request,data,15)
     return render_to_response('center_content/category.html' , data, context_instance=RequestContext(request))
 
@@ -62,21 +62,96 @@ def blogs(request):
 def write_blog(request):
     data = dict()
     if request.POST.get('blog_id'):
-        blog = Blog.objects.prefetch_related('tag').select_related('category').get(id=request.POST.get('blog_id'),user = request.user,is_delete=False)
+        blog = Blog.objects.prefetch_related('tag').select_related('category').get(id=request.POST.get('blog_id'),is_delete=False)
         data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
         data['blog']=blog
-    categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-create_time')
+    categorys = Category.objects.filter(is_delete = False).order_by('-create_time')
     data['categorys'] = categorys
     data['tags'] = Tag.objects.all()
     return render_to_response('center_content/write_blog.html' , data, context_instance=RequestContext(request))
+
+
+@login_required
+def write_blog_markdown(request):
+    data = dict()
+    if request.POST.get('blog_id'):
+        blog = Blog.objects.prefetch_related('tag').select_related('category').get(id=request.POST.get('blog_id'),is_delete=False)
+        data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
+        data['blog']=blog
+        blogmds = BlogMd.objects.filter(blog=blog)
+        if blogmds:
+            data['blogmd'] = blogmds[0]
+    categorys = Category.objects.filter(is_delete = False).order_by('-create_time')
+    data['categorys'] = categorys
+    data['tags'] = Tag.objects.all()
+    return render_to_response('write_blog.html' , data, context_instance=RequestContext(request))
+
+
+@login_required
+def edit(request):
+    data = dict()
+    if request.method=='GET':
+        categorys = Category.objects.filter(is_delete = False).order_by('-create_time')
+        data['categorys'] = categorys
+        if request.GET.get('blog_id'):
+            blog = Blog.objects.get(id=request.GET.get('blog_id'),is_delete=False)
+            data['blog']=blog
+            data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
+            data['tags'] = Tag.objects.all()
+            blogmds = BlogMd.objects.filter(blog=blog)
+            if blogmds:
+                data['blogmd'] = blogmds[0]
+        return render_to_response('edit.html',data, context_instance=RequestContext(request))
+    else:
+        try:
+            id = request.POST.get('id')
+            title = request.POST.get('title')
+            content = request.POST.get('content')
+            tag_ids = request.POST.getlist('taglist[]')
+            summary=''
+            soup = BeautifulSoup(content)
+            tags = []
+            listtags = []
+            if soup.body:
+                listtags = list(soup.body.children)[0:4]
+            else:
+                listtags = list(soup.children)[0:4]
+            for tag in listtags:
+                if isinstance(tag,element.Tag):
+                    imgtags = tag.find_all('img')
+                    for imgtag in imgtags:
+                        if 'src' in imgtag.attrs:
+                            imgtag['src'] = imgtag.attrs['src']+'!p1'
+                tags.append(tag)
+            summary = ''.join([tag.encode("utf-8") for tag in tags])
+            category_id = request.POST.get('category_id')
+            blog = Blog()
+            if id != '':
+                blog = Blog.objects.get(id=id)
+            blog.title=title
+            blog.summary=summary
+            blog.content=content
+            blog.category_id=category_id
+            blog.save()
+            blog.tag = tag_ids
+            if id == '':
+                blog.name = SysUtil.random_str(20)+  "-%s.html"%blog.id
+                blog.save()
+            if request.POST.get('blogmd'):
+                BlogMd.objects.update_or_create(blog = blog,content=request.POST.get('blogmd'))
+            data['is_succ']=True
+        except Exception as e:
+            data['is_succ']=False
+            data['msg'] = traceback.format_exc()
+        return HttpResponse(json.dumps(data), content_type='application/json')
 
 @login_required
 def add_category(request):
     data = dict()
     try:
         name = request.POST.get('name')
-        Category.objects.create(name = name, user = request.user)
-        categorys = Category.objects.filter(is_delete = False,user=request.user)
+        Category.objects.create(name = name)
+        categorys = Category.objects.filter(is_delete = False)
         request.session['categorys'] = categorys
         data['is_succ'] = True
     except Exception:
@@ -89,10 +164,10 @@ def del_category(request):
     data = dict()
     try:
         id = request.POST.get('id')
-        category = Category.objects.get(id = id,user = request.user)
+        category = Category.objects.get(id = id)
         category.is_delete = True
         category.save()
-        categorys = Category.objects.filter(is_delete = False,user=request.user)
+        categorys = Category.objects.filter(is_delete = False)
         request.session['categorys'] = categorys
         data['is_succ'] = True
     except Exception:
@@ -105,7 +180,7 @@ def delete_blog(request):
     data = dict()
     try:
         id = request.POST.get('id')
-        blog = Blog.objects.get(id = id,user = request.user)
+        blog = Blog.objects.get(id = id)
         blog.is_delete = True
         blog.save()
         data['is_succ'] = True
@@ -146,30 +221,6 @@ def delete_user(request):
             data['is_succ'] = False
             data['msg'] = '删除失败'
     return HttpResponse(json.dumps(data), content_type='application/json')
-
-
-@login_required
-def comments(request):
-    data = dict()
-    comments = Comment.objects.filter(blog__is_delete = False,blog__category__is_delete = False,user = request.user,is_delete = False).order_by('-create_time')
-    paginate_datalist_ajax(comments,len(comments),request,data,15)
-    return render_to_response('center_content/comments_list.html' , data, context_instance=RequestContext(request))
-
-
-@login_required
-def del_comment(request):
-    data = dict()
-    try:
-        id = request.POST.get('id')
-        comment = Comment.objects.get(id=id,blog__user=request.user)
-        comment.is_delete = True
-        comment.save()
-        data['is_succ'] = True
-    except Exception:
-        data['is_succ'] = False
-        data['msg'] = '删除失败'
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
 
 @login_required
 def save_logo(request):
@@ -224,3 +275,23 @@ def add_tag(request):
         data['msg'] = '添加失败'
 
     return HttpResponse(json.dumps(data), content_type='application/json')
+
+@login_required
+@csrf_exempt
+def md_img_upload(request):
+    results = dict()
+    try:
+        photo_keys= request.FILES.keys()
+        if len(photo_keys)>0:
+            file1=request.FILES[photo_keys[0]]
+            size  = file1.size/1024
+            limit_num =2000*1000
+            if limit_num !=0 and size > limit_num :
+                results= {'message': '无法上传超过%sKB图片'%limit_num,'success':0}
+            else:
+                results= {'message':"上传成功",'url':settings.MEDIA_URL+FileUtil.upload_to_upyun(file1),"success":1}
+        else:
+            results = {'message': '没有找到图片','success':0}
+    except Exception as e:
+        pass
+    return HttpResponse(json.dumps(results), content_type='application/json')

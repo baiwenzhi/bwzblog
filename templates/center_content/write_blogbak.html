@@ -1,0 +1,69 @@
+<h1>{% if blog %}修改blog{% else %}增加blog{% endif %}</h1>
+<input type="hidden" id="blog_id" value="{{ blog.id|default_if_none:'' }}">
+<p>
+    <label for="">标题</label>
+    <input id="title" class="long_input"  autocomplete="off" placeholder="标题" type="text" value="{{ blog.title|default_if_none:'' }}">
+</p>
+<p>
+    <label for="">分类</label>
+    <select id="category_id">
+        <option value="">选择分类</option>
+        {% for category in categorys %}
+            <option value="{{ category.id }}"
+                    {% if blog.category.id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+</p>
+<p>
+    <label for="">标签</label>
+    <select id="tag_id" multiple="multiple" class="multiple">
+        {% for tag in tags %}
+            <option value="{{ tag.id }}">{{ tag.name }}</option>
+        {% endfor %}
+    </select>
+    <a onclick="add_tag(this)">
+        <img src="/static/admin/img/icon_addlink.gif" alt="Add" height="10" width="10">
+    </a>
+</p>
+<p style="display: none;">
+    <label>增加标签</label>
+    <input type="text"/>
+    <button class="btn" onclick="add_tag_post(this)">确认添加</button>
+    <button class="btn" style="background-color: darkgreen;" onclick="cancle_add_tag(this)">取消</button>
+</p>
+<div style="display: none;" id="real_content">
+    {{ blog.content|safe|default_if_none:'' }}
+</div>
+    <textarea id="content">
+        {{ blog.content|safe|default_if_none:'' }}
+    </textarea>
+<p>
+    <div class="input_btn" onclick="save_blog()">保存</div>
+</p>
+
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor1_3_6-utf8-jsp/ueditor.all.min.js"></script>
+
+<script>
+    var tag_ids = [{{ tag_ids }}]
+    for (var i=0;i<tag_ids.length;i++){
+        $("#tag_id option[value="+tag_ids[i]+"]").attr('selected','selected')
+    }
+
+    var editorOption = {
+        wordCount: false,
+        //关闭elementPath
+        elementPathEnabled: false,
+        initialFrameWidth: 900,
+        initialContent: '',
+        imagePath: "{{ MEDIA_URL }}",
+        imageUrl: "/base/photo_upload/",
+        param_upload: '{"csrfmiddlewaretoken":"{{ csrf_token }}"}'
+    };
+    var editor_a = new baidu.editor.ui.Editor(editorOption);
+
+    $(document).ready(function(){
+        editor_a.render('content');
+    })
+
+</script>

@@ -24,7 +24,7 @@
         <tbody>
         {% for blog in recList %}
             <tr class="blog_item c_{{ blog.category_id }}">
-                <td><a href="/blog/{{ blog.name }}" target="_blank">{{ blog.title }}</a></td>
+                <td><a href="/#/blog/{{ blog.name }}" target="_blank">{{ blog.title }}</a></td>
                 <td>{{ blog.category.name }}</td>
                 <td>{{ blog.visit_count }}</td>
                 <td>{{ blog.comment_count }}</td>
@@ -39,7 +39,7 @@
                 <td>
                     <a href='javascript:void(0)' onclick="bind_dialog_yes(delete_blog,'你确定删除此博客吗？删除后将无法访问！',this,{{ blog.id }})">删除</a>
                     <a href='javascript:void(0)'
-                       onclick="load_right('/usercenter/write_blog/',{blog_id:'{{ blog.id }}'})">编辑</a>
+                       onclick="load_right('/usercenter/write_blog_markdown/',{blog_id:'{{ blog.id }}'})">编辑</a>
                 </td>
             </tr>
         {% endfor %}

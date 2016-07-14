@@ -1,0 +1,17 @@
+<ul class="s_ul" ng-repeat="blog in blogs">
+    <li>
+        <a ng-href="#/blog/{{ blog.name }}">
+            <span>{{ blog.create_time|date:'yyyy-MM-dd' }}</span>
+            <div class="title">
+                {{ blog.title }}
+            </div>
+        </a>
+    </li>
+</ul>
+<div class="pagination">
+    <ul>
+        <li ng-if="previous!=null"><a ng-click="goto(previous)">上一页</a></li>
+
+        <li ng-if="next!=null"><a ng-click="goto(next)">下一页</a></li>
+    </ul>
+</div>

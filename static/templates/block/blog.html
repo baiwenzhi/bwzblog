@@ -1,0 +1,37 @@
+<div class="blog_content" ng-if="loadingend">
+    <div class="blog_h">
+        <div class="blog_title">
+            <div class="pre-cat">
+                <div class="pre-catinner pre_btn">
+                    <a ng-href="#/category/{{ blog.category.id }}">{{ blog.category.name }}</a>
+                </div>
+                <div class="pre-catarrow">
+                </div>
+            </div>
+            <h2>{{ blog.title }}</h2>
+        </div>
+        <div class="info">
+            <span><i class="fa fa-calendar"></i>&nbsp;{{ blog.create_time|date:'yyyy-MM-dd' }}</span>
+            <span><i class="fa fa-eye"></i>&nbsp;{{ blog.visit_count }}</span>
+            <span><i class="fa fa-comment-o"></i>&nbsp;{{ blog.comment_count }}</span>
+            <span class="label" ng-repeat="tag_item in blog.tag" color><a href="#/tag/{{ tag_item.id }}">{{ tag_item.name }}</a></span>
+        </div>
+        <div ng-bind-html="blog.content|to_trusted" class="markdown-body editormd-preview-container" style="padding: 0;">
+
+        </div>
+        <div id="duoshuocontent">
+
+        </div>
+    </div>
+</div>
+
+<div class="blog_mb" ng-if="!loadingend">
+    <div class="loader">
+        <div class="loading-5">
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+    </div>
+</div>
+

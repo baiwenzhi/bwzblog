@@ -1,8 +1,3 @@
-name: blogbwz
-version: 11
-libraries:
-- name: "django"
-  version: "1.8"
 
 cron:
 - description: cron_get_background_img
@@ -20,6 +15,7 @@ cron:
 handlers:
 - url: /robots.txt
   static_path: robots.txt
+  gzip: on
 
 - url: /static/
   static_path: static

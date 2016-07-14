@@ -12,7 +12,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from base.forms import PhotoForm
-from base.models import Category , Blog ,User, Active_Email, BackgroundImg, Comment, Tag
+from base.models import Category , Blog ,User, Active_Email, BackgroundImg, Tag
 from base.util import getUrlRespHtml, paginate_datalist, FileUtil ,SysUtil, \
      send_html_mail, user_visit,sqls, Duoshuo
 from django.contrib.auth.decorators import login_required
@@ -21,6 +21,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from bs4 import BeautifulSoup
 import pylibmc as memcache
+import sae.kvdb
 
 def index(request):
     data = dict()
@@ -36,6 +37,10 @@ def get_background(request):
         backgroundimg = BackgroundImg()
         backgroundimg.img = redate['images'][0]['url']
         backgroundimg.save()
+        # mc = memcache.Client(['127.0.0.1'])
+        # mc.set('background',redate['images'][0]['url'])
+        kv = sae.kvdb.Client()
+        kv.set('background',redate['images'][0]['url'])
         return HttpResponse(redate['images'][0]['url'])
     except:
         logging.warning(traceback.format_exc())
@@ -48,8 +53,8 @@ def login(request):
     if request.method == 'GET':
         next = request.GET.get('next')
         data['next'] = next
-        backgroundimg = BackgroundImg.objects.order_by('?')[0]
-        data['img'] = backgroundimg.img
+        # backgroundimg = memcache.Client(['127.0.0.1']).get('background')
+        data['img'] = sae.kvdb.Client().get('background')
         return render_to_response('login.html',data, context_instance=RequestContext(request))
     else:
         username=request.POST.get('username')
@@ -173,7 +178,6 @@ def logout(request):
 @login_required
 @csrf_exempt
 def photo_upload(request):
-    form = PhotoForm(request.POST,request.FILES)
     results = dict()
     try:
         if form.is_valid():
@@ -189,7 +193,6 @@ def photo_upload(request):
     except Exception as e:
         pass
     return HttpResponse(json.dumps(results), mimetype='application/json')
-
 
 def category(request,category_id):
     data=dict()
@@ -218,74 +221,6 @@ def search(request):
     data['menu'] = 'home'
     return render_to_response('homepage.html',data, context_instance=RequestContext(request))
 
-@login_required
-def edit(request):
-    data = dict()
-    if request.method=='GET':
-        categorys = Category.objects.filter(is_delete = False,user = request.user).order_by('-create_time')
-        data['categorys'] = categorys
-        if request.GET.get('blog_id'):
-            blog = Blog.objects.get(id=request.GET.get('blog_id'),user = request.user,is_delete=False)
-            data['blog']=blog
-            data['tag_ids'] = ','.join([str(tag.id) for tag in blog.tag.all()])
-            data['tags'] = Tag.objects.all()
-        return render_to_response('edit.html',data, context_instance=RequestContext(request))
-    else:
-        try:
-
-            id = request.POST.get('id')
-            title = request.POST.get('title')
-            content = request.POST.get('content')
-            tag_ids = request.POST.getlist('taglist[]')
-            summary=''
-            soup = BeautifulSoup(content)
-            if soup.body:
-                summary = ''.join([tag.encode("utf-8") for tag in list(soup.body.children)[0:4]])
-            else:
-                summary = ''.join([tag.encode("utf-8") for tag in list(soup.children)[0:4]])
-            category_id = request.POST.get('category_id')
-            blog = Blog()
-            if id != '':
-                blog = Blog.objects.get(id=id,user = request.user)
-            blog.title=title
-            blog.user=request.user
-            blog.summary=summary
-            blog.content=content
-            blog.category_id=category_id
-            blog.save()
-            blog.tag = tag_ids
-            if id == '':
-                blog.name = SysUtil.random_str(20)+  "-%s.html"%blog.id
-                blog.save()
-            data['is_succ']=True
-        except Exception as e:
-            data['is_succ']=False
-            data['msg'] = traceback.format_exc()
-        return HttpResponse(json.dumps(data), content_type='application/json')
-
-def sub_comment(request):
-    data = dict()
-    try:
-        nickname = request.POST.get('nickname')
-        url = request.POST.get('url')
-        content = request.POST.get('content')
-        comment = Comment()
-        blog_name = request.POST.get('blog_name')
-        parent_id = request.POST.get('parent_id') or None
-        blog = Blog.objects.get(name = blog_name)
-        comment.blog = blog
-        comment.name = nickname
-        comment.content = content
-        comment.web_url = url
-        comment.parent_id = parent_id
-        if request.user.is_authenticated():
-            comment.user = request.user
-        comment.save()
-        data['is_succ'] = True
-    except Exception as e:
-        data['msg'] = e.message
-        data['is_succ'] = False
-    return HttpResponse(json.dumps(data), content_type='application/json')
 
 def fav(request):
     data=dict()

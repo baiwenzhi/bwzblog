@@ -13,10 +13,17 @@
     <meta property="wb:webmaster" content="72d1a537734b083b" />
     <link href="/static/image/favicon.ico" rel="icon" type="image/x-icon" />
     <link href="/static/image/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css?v1" />
     <link rel="stylesheet" type="text/css" href="/static/ueditor1_3_6-utf8-jsp/third-party/SyntaxHighlighter/shCoreDefault.css"/>
-
+{#    <script>#}
+{#    var _hmt = _hmt || [];#}
+{#    (function() {#}
+{#      var hm = document.createElement("script");#}
+{#      hm.src = "//hm.baidu.com/hm.js?f5fb6db374b6e6999dc9ed4d19d6f60f";#}
+{#      var s = document.getElementsByTagName("script")[0];#}
+{#      s.parentNode.insertBefore(hm, s);#}
+{#    })();#}
+{#    </script>#}
 
 
 
@@ -28,14 +35,14 @@
         <div id="main-left">
             <div class="menu_content">
                 <div class="log_img">
-                    <a href="/">
+                    <a href="#blogs">
                         <div class="name">{{ request.session.blog_owner.blog_name }}</div>
                     </a>
                 </div>
                 <div id="menubar">
                     <ul>
                         <li {% if menu == 'home' %}class="current-click"{% endif %}>
-                            <a href="/">
+                            <a href="#blogs">
                                 <span class="menu_text">首页</span>
                                 <span class="bck_mb"></span>
                             </a>

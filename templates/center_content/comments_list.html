@@ -20,7 +20,7 @@
                     <td><a href="{{ comment.url }}" target="_blank">{{ comment.url }}</a></td>
                     <td>{{ comment.create_time|date:'Y-m-d H:i:s' }}</td>
                     <td>{{ comment.content|safe }}</td>
-                    <td><a href="/blog/{{ comment.blog.name }}" target="_blank">{{ comment.blog.title }}</a></td>
+                    <td><a href="#/blog/{{ comment.blog.name }}" target="_blank">{{ comment.blog.title }}</a></td>
                     <td>
                         <a  href='javascript:void(0)' onclick="bind_dialog_yes(delete_comment,'你确定删除此评论吗？删除后此评论下的回复将无法显示！',this,{{ comment.id }})">删除</a>
                     </td>

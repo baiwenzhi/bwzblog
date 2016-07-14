@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+{% extends 'base/../../templates/base.html' %}
 {% load mobiletag %}
 {% block title %}
     {{ blog.title }}|
@@ -115,10 +115,19 @@
 
     </div>
 
+
 {% endblock %}
 
 {% block js-content %}
-  
+    <script>
+        //百度推送链接
+        (function () {
+            var bp = document.createElement('script');
+            bp.src = '//push.zhanzhang.baidu.com/push.js';
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
 
     <script type="text/javascript" src="/static/js/faceinput.js"></script>
     <script type="text/javascript" src="/static/js/jquerycode.js"></script>
@@ -127,10 +136,16 @@
         //为了在编辑器之外能展示高亮代码
         SyntaxHighlighter.highlight();
         //调整左右对齐
-
+{#        for (var i = 0, di; di = SyntaxHighlighter.highlightContainers[i++];) {#}
+{#            var tds = di.getElementsByTagName('td');#}
+{#            for (var j = 0, li, ri; li = tds[0].childNodes[j]; j++) {#}
+{#                ri = tds[1].firstChild.childNodes[j];#}
+{#                ri.style.height = li.style.height = ri.offsetHeight + 'px';#}
+{#            }#}
+{#        }#}
     </script>
     <script type="text/javascript">
-var duoshuoQuery = {short_name:"baiwenzhi"};
+    var duoshuoQuery = {short_name:"baiwenzhi"};
     (function() {
         var ds = document.createElement('script');
         ds.type = 'text/javascript';ds.async = true;

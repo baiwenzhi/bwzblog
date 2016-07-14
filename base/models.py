@@ -30,15 +30,7 @@ class User(AbstractUser):
         verbose_name = '用户'
         verbose_name_plural = '用户'
 
-class AbstractUserModel(models.Model):
-    create_time = models.DateTimeField(verbose_name="创建时间", blank=True, null=True, auto_now_add=True)
-    update_time = models.DateTimeField(verbose_name="修改时间", blank=True, null=True, auto_now=True)
-    user = models.ForeignKey(User)
-
-    class Meta:
-        abstract = True
-
-class Category(AbstractUserModel):
+class Category(AbstractBaseModel):
     name = models.CharField(verbose_name='栏目', max_length=100)
     is_delete = models.BooleanField(default=False)
 
@@ -60,7 +52,7 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.name
 
-class Blog(AbstractUserModel):
+class Blog(AbstractBaseModel):
     title = models.CharField(verbose_name='标题', max_length=100, blank=True, null=True)
     category = models.ForeignKey(Category)
     summary = models.TextField(verbose_name='摘要',blank=True, null=True)
@@ -83,6 +75,10 @@ class Blog(AbstractUserModel):
     def get_absolute_url(self):
         return '/blog/%s'%self.name
 
+class BlogMd(AbstractBaseModel):
+    blog = models.ForeignKey(Blog)
+    content = models.TextField(verbose_name='md内容',blank=True,null=True)
+
 class User_visit(models.Model):
     user= models.CharField(max_length=200,default='unknown man')
     agent = models.CharField(max_length=200,default=None,null=True,blank=True)
@@ -98,25 +94,7 @@ class User_visit(models.Model):
     def __unicode__(self):
         return self.user
 
-class Comment(AbstractBaseModel):
-
-    blog = models.ForeignKey(Blog)
-    name = models.CharField(verbose_name='昵称',max_length=50)
-    web_url = models.URLField(verbose_name='',max_length=100, blank=True, null=True)
-    content = models.TextField(verbose_name='内容')
-    user = models.ForeignKey(User,default=None,null=True,blank=True)
-    parent = models.ForeignKey("self",default=None,null=True,blank=True)
-    is_delete = models.BooleanField(verbose_name='是否删除',default=False)
-
-    class Meta:
-        verbose_name = '评论'
-        verbose_name_plural = '评论'
-        ordering = ['-create_time']
-        
-    def __unicode__(self):
-        return self.id
-
-class Active_Email(AbstractUserModel):
+class Active_Email(AbstractBaseModel):
     url = models.CharField(verbose_name='随机url',max_length=200)
 
     class Meta:

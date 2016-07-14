@@ -1,0 +1,67 @@
+    <h1>{% if blog %}修改blog{% else %}增加blog{% endif %}</h1>
+    <input type="hidden" id="blog_id" value="{{ blog.id|default_if_none:'' }}">
+    <p>
+        <label for="">标题</label>
+        <input id="title" class="long_input"  autocomplete="off" placeholder="标题" type="text" value="{{ blog.title|default_if_none:'' }}">
+    </p>
+    <p>
+        <label for="">分类</label>
+        <select id="category_id">
+            <option value="">选择分类</option>
+            {% for category in categorys %}
+                <option value="{{ category.id }}"
+                        {% if blog.category.id == category.id %}selected="selected"{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        <label for="">标签</label>
+        <select id="tag_id" multiple="multiple" class="multiple">
+            {% for tag in tags %}
+                <option value="{{ tag.id }}">{{ tag.name }}</option>
+            {% endfor %}
+        </select>
+        <a onclick="add_tag(this)">
+            <img src="/static/admin/img/icon_addlink.gif" alt="Add" height="10" width="10">
+        </a>
+    </p>
+    <p style="display: none;">
+        <label>增加标签</label>
+        <input type="text"/>
+        <button class="btn" onclick="add_tag_post(this)">确认添加</button>
+        <button class="btn" style="background-color: darkgreen;" onclick="cancle_add_tag(this)">取消</button>
+    </p>
+
+
+    <div id="test-editormd">
+        <textarea style="display:none;">{{ blogmd.content|safe|default_if_none:'' }}</textarea>
+    </div>
+ <p>
+    <div class="input_btn" onclick="save_blog(true)">保存</div>
+</p>
+<script type="text/javascript">
+    var testEditor;
+
+    $(function () {
+        testEditor = editormd("test-editormd", {
+            width: "100%",
+            syncScrolling: "single",
+            path: "/static/md/hlib/",
+            height: 400,
+            saveHTMLToTextarea : true,
+            imageUpload : true,
+            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "/usercenter/upload/"
+        });
+
+        /*
+         // or
+         testEditor = editormd({
+         id      : "test-editormd",
+         width   : "90%",
+         height  : 640,
+         path    : "../lib/"
+         });
+         */
+    });
+</script>

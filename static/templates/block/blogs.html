@@ -1,0 +1,47 @@
+<div class="blogs">
+    <div class="blog"  ng-repeat="blog in blogs|filter:words">
+        <div class="blog_title">
+            <div class="pre-cat">
+                <div class="pre-catinner pre_btn">
+                    <a ng-href="#/category/{{ blog.category.id }}">{{ blog.category.name }}</a>
+                </div>
+                <div class="pre-catarrow">
+                </div>
+            </div>
+
+            <a ng-href="#/blog/{{ blog.name }}" >
+                <h2>{{ blog.title }}</h2>
+            </a>
+
+        </div>
+        <div class="info">
+            <span><i class="fa fa-calendar"></i>&nbsp;{{ blog.create_time|date:'yyyy-MM-dd' }}</span>
+            <span><i class="fa fa-eye"></i>&nbsp;{{ blog.visit_count }}</span>
+            <span><i class="fa fa-comment-o"></i>&nbsp;{{ blog.comment_count }}</span>
+            <span class="label" ng-repeat="each_tag in blog.tag" color><a ng-href="#/tag/{{ each_tag.id }}">{{ each_tag.name }}</a></span>
+        </div>
+
+        <div ng-bind-html="blog.summary|to_trusted" class="content markdown-body editormd-preview-container" style="padding: 0;">
+
+        </div>
+        <div class="right_a">
+            <a ng-href="#/blog/{{ blog.name }}" class="btn_red">阅读全文</a>
+        </div>
+    </div>
+    <div ng-if="(blogs|filter:{title:keywords}).length==0&&loadingend" class="blog">
+        <h2>暂无内容</h2>
+    </div>
+    <div class="pagination" ng-if="loadingend" paging>
+
+    </div>
+</div>
+<div class="blog_mb" ng-show="!loadingend">
+    <div class="loader">
+        <div class="loading-5">
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+    </div>
+</div>
+
