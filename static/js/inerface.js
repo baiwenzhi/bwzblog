@@ -33,6 +33,11 @@ var mainapp = angular.module("mainapp",['ngRoute','ngSanitize']);
         redirectTo: '/blogs'
       });
 });
+mainapp.run(function($rootScope, $location){
+$rootScope.$on('$routeChangeStart', function(evt, next, current){
+Top()
+  });
+})
 mainapp.factory('fac_page_active',function($rootScope){
     var tars = {}
     tars.active_page='';
@@ -72,16 +77,26 @@ mainapp.directive('paging',function(){
         controller:function($scope,$element,$location){
             var pageno = parseInt($location.search().page||1)
             var maxpage = Math.ceil($scope.count/10)
-            var url = angular.toJson($location.search())!='{}'?$location.url()+'&':($location.url()+'?')
             var str="<ul>"
             if ($scope.previous){
                 str+='<li><a href="#'+$scope.previous.replace("http://"+window.location.host+"/api",'')+'">上一页</a></li>'
             }
             for(var i= 1;i<=maxpage;i++){
+                var searchs = $location.search()
+                searchs.page = i
+                var url=$location.path()
+                for ( var k in searchs ){
+                    if (url == $location.path()){
+                        url +="?"+k+"="+searchs[k]
+                    }else{
+                        url+="&"+k+"="+searchs[k]
+                    }
+
+                }
                 if(i == pageno){
-                    str+='<li class="active"><a href="#'+url+'page='+i+'">'+i+'</a></li>'
+                    str+='<li class="active"><a href="#'+url+'">'+i+'</a></li>'
                 }else{
-                    str+='<li><a href="#'+url+'page='+i+'">'+i+'</a></li>'
+                    str+='<li><a href="#'+url+'">'+i+'</a></li>'
                 }
             }
             if($scope.next){
