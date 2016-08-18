@@ -2,13 +2,12 @@
 import json
 
 from base.models import User, Category, BackgroundImg
-import pylibmc as memcache
-import  sae.kvdb
+import memcache
 
 class myMiddle(object):
     def process_request(self, request):
         if request.META['PATH_INFO'] in ['/','']:
-            kv = sae.kvdb.Client()
+            kv = memcache.Client(['127.0.0.1'])
             visit_count = kv.get("visit_count") or 0
             kv.set('visit_count',int(visit_count)+1)
         if not request.session.has_key('blog_owner'):

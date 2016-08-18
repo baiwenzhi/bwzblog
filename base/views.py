@@ -20,8 +20,7 @@ from django.db import transaction, connection
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from bs4 import BeautifulSoup
-import pylibmc as memcache
-import sae.kvdb
+import memcache
 
 def index(request):
     data = dict()
@@ -37,10 +36,10 @@ def get_background(request):
         backgroundimg = BackgroundImg()
         backgroundimg.img = redate['images'][0]['url']
         backgroundimg.save()
-        # mc = memcache.Client(['127.0.0.1'])
-        # mc.set('background',redate['images'][0]['url'])
-        kv = sae.kvdb.Client()
-        kv.set('background',redate['images'][0]['url'])
+        mc = memcache.Client(['127.0.0.1'])
+        mc.set('background',redate['images'][0]['url'])
+        # kv = sae.kvdb.Client()
+        # kv.set('background',redate['images'][0]['url'])
         return HttpResponse(redate['images'][0]['url'])
     except:
         logging.warning(traceback.format_exc())
@@ -54,7 +53,7 @@ def login(request):
         next = request.GET.get('next')
         data['next'] = next
         # backgroundimg = memcache.Client(['127.0.0.1']).get('background')
-        data['img'] = sae.kvdb.Client().get('background')
+        data['img'] = memcache.Client(['127.0.0.1']).get('background')
         return render_to_response('login.html',data, context_instance=RequestContext(request))
     else:
         username=request.POST.get('username')

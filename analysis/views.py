@@ -2,7 +2,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from analysis.models import VisitCount, VisitCountHour
-import pylibmc as memcache
+import memcache
 import datetime
 from django.db.models import Sum
 import sae.kvdb
@@ -20,8 +20,8 @@ def cron_analysis_day(request):
     return HttpResponse('success %s'%count)
 
 def cron_analysis_hour(request):
-    mc = sae.kvdb.Client()
-    # mc = memcache.Client(['127.0.0.1'])
+    # mc = sae.kvdb.Client()
+    mc = memcache.Client(['127.0.0.1'])
     count = mc.get('visit_count')
     now = datetime.datetime.now()
     dtstr = "%s-%s-%s %s:00:00"%(now.year,now.month,now.day,now.hour)
